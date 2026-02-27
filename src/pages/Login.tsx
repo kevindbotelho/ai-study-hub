@@ -94,9 +94,9 @@ export function Login({ onLoginSuccess }: LoginProps) {
             </div>
 
             {/* Right Column: Form */}
-            <div className="flex flex-col items-center justify-center w-full lg:w-[55%] h-full p-8 md:p-16 lg:p-24 overflow-y-auto">
-                <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="text-center mb-10">
+            <div className="flex flex-col items-center justify-center w-full lg:w-[55%] h-full p-6 md:p-10 lg:p-16 overflow-y-auto">
+                <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500 my-auto">
+                    <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold text-slate-900 mb-2">
                             {isLogin ? 'Acesse sua conta' : 'Crie sua conta'}
                         </h1>
@@ -105,15 +105,15 @@ export function Login({ onLoginSuccess }: LoginProps) {
                         </p>
                     </div>
 
-                    <form onSubmit={handleAuth} className="space-y-5">
+                    <form onSubmit={handleAuth} className="space-y-4">
                         {error && (
-                            <div className="p-4 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-medium">
+                            <div className="p-3 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-medium">
                                 {error}
                             </div>
                         )}
 
                         {!isLogin && (
-                            <div className="space-y-1.5">
+                            <div className="space-y-1">
                                 <label className="text-sm font-semibold text-slate-700 ml-1">Nome Completo</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -125,13 +125,13 @@ export function Login({ onLoginSuccess }: LoginProps) {
                                         onChange={(e) => setName(e.target.value)}
                                         required={!isLogin}
                                         placeholder="Seu nome"
-                                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-primary/20 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
+                                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-primary/20 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                                     />
                                 </div>
                             </div>
                         )}
 
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                             <label className="text-sm font-semibold text-slate-700 ml-1">E-mail</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -143,12 +143,12 @@ export function Login({ onLoginSuccess }: LoginProps) {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     placeholder="seu.email@exemplo.com"
-                                    className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-primary/20 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
+                                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-primary/20 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                             <label className="text-sm font-semibold text-slate-700 ml-1">Senha</label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -160,7 +160,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     placeholder="••••••••"
-                                    className="w-full pl-11 pr-11 py-3.5 rounded-xl border border-primary/20 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
+                                    className="w-full pl-11 pr-11 py-3 rounded-xl border border-primary/20 bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                                 />
                                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer hover:text-primary">
                                     <span className="material-symbols-outlined text-slate-400 hover:text-primary transition-colors">visibility</span>
@@ -169,7 +169,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
                         </div>
 
                         {isLogin && (
-                            <div className="flex justify-end">
+                            <div className="flex justify-end pt-1">
                                 <a href="#" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
                                     Esqueceu a senha?
                                 </a>
@@ -179,7 +179,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3.5 bg-primary text-white font-bold rounded-xl shadow-md shadow-primary/20 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:hover:shadow-md transition-all flex justify-center items-center gap-2"
+                            className="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md shadow-primary/20 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:hover:shadow-md transition-all flex justify-center items-center gap-2 mt-2"
                         >
                             {loading ? (
                                 <span className="material-symbols-outlined animate-spin text-sm">sync</span>
@@ -188,7 +188,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
                         </button>
                     </form>
 
-                    <div className="mt-8 mb-6 flex items-center justify-center gap-4">
+                    <div className="my-6 flex items-center justify-center gap-4">
                         <div className="h-px bg-slate-200 flex-1"></div>
                         <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">OU</span>
                         <div className="h-px bg-slate-200 flex-1"></div>
@@ -197,7 +197,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
                     <button
                         onClick={handleGoogleLogin}
                         type="button"
-                        className="w-full py-3.5 bg-white text-slate-700 font-bold rounded-xl border-2 border-slate-100 shadow-sm hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center justify-center gap-3"
+                        className="w-full py-3 bg-white text-slate-700 font-bold rounded-xl border-2 border-slate-100 shadow-sm hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center justify-center gap-3"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -208,7 +208,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
                         Continuar com o Google
                     </button>
 
-                    <div className="mt-8 text-center">
+                    <div className="mt-6 text-center">
                         <p className="text-sm font-medium text-slate-500">
                             {isLogin ? 'Ainda não tem uma conta?' : 'Já possui uma conta?'} {' '}
                             <button
