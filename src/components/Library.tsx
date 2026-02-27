@@ -61,7 +61,7 @@ export function Library() {
     };
 
     return (
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col w-full h-full pb-10">
             <div className="mb-6 flex justify-between items-end">
                 <div>
                     <h2 className="text-2xl font-bold">Sua Biblioteca</h2>
@@ -70,7 +70,7 @@ export function Library() {
             </div>
 
             {/* Filters */}
-            <div className="flex gap-2 pb-6 overflow-x-auto no-scrollbar w-full border-b border-primary/5 mb-6">
+            <div className="flex flex-wrap gap-2 pb-6 w-full border-b border-primary/5 mb-6">
                 {categories.map((cat) => (
                     <button
                         key={cat}
