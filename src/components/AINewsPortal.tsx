@@ -1,4 +1,3 @@
-import React from 'react';
 import { weeklyInsights } from '../data/mockData';
 
 export const AINewsPortal = () => {

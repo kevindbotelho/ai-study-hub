@@ -1,4 +1,3 @@
-import React from 'react';
 import { recentSummaries } from '../data/mockData';
 
 export const RecentSummaries = () => {
