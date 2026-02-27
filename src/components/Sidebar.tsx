@@ -26,7 +26,7 @@ export const Sidebar = ({ currentView, setCurrentView }: SidebarProps) => {
                 </button>
                 <button onClick={() => setCurrentView('ai-workspace')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentView === 'ai-workspace' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-500 hover:bg-primary/10 hover:text-primary'}`}>
                     <span className="material-symbols-outlined">psychology</span>
-                    <span className="font-medium">Espaço IA</span>
+                    <span className="font-medium">Estúdio IA</span>
                 </button>
                 <div className="mt-8 px-4">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Pessoal</p>
