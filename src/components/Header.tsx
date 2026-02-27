@@ -7,7 +7,7 @@ export const Header = () => {
                 <h2 className="text-xl font-bold">Dashboard</h2>
                 <div className="relative flex-1 ml-8">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
-                    <input className="w-full bg-primary/5 border-none rounded-xl py-2.5 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 text-sm transition-all" placeholder="Search summaries, files, or news..." type="text" />
+                    <input className="w-full bg-primary/5 border-none rounded-xl py-2.5 pl-11 pr-4 focus:ring-2 focus:ring-primary/50 text-sm transition-all" placeholder="Buscar resumos, arquivos ou notícias..." type="text" />
                 </div>
             </div>
             <div className="flex items-center gap-4">
@@ -18,7 +18,7 @@ export const Header = () => {
                 <div className="flex items-center gap-3 pl-4 border-l border-primary/10">
                     <div className="text-right">
                         <p className="text-sm font-bold leading-none">Alex Rivera</p>
-                        <p className="text-[10px] text-slate-500 font-medium">Premium Member</p>
+                        <p className="text-[10px] text-slate-500 font-medium">Membro Premium</p>
                     </div>
                     <div className="size-10 rounded-full bg-primary/20 overflow-hidden border-2 border-primary/10">
                         <img alt="User Profile" className="w-full h-full object-cover" data-alt="Portrait of a young man with glasses" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6Fs1JE-JeYmQp5HzyVJdt_AJaCcegJIn_WiBWOthO1TN-kTe-Qm6qGCTGJFwevFmXOO8G1yB0X2XfO8iMtQIGr3vYB9Bgdk0wF1L7YNkWOqu7k1jlyN2vHLw2vPNSzTrkO3NskW9bh9vy5Cq_yE0v8WwrlYsR3r5pzYyYT5XlA-dU2hNQ5YzVL7doGYkdMsQQGB462kyaoZjtrK0MCQQvS1v8DjOpEEXYHKDSpMImflChj1-qB8ctgVI9F0YuiOk4wr7eSnaJOok" />

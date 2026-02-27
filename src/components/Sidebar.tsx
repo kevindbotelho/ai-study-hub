@@ -12,38 +12,38 @@ export const Sidebar = ({ currentView, setCurrentView }: SidebarProps) => {
                 </div>
                 <div>
                     <h1 className="text-lg font-bold leading-none">Academy AI</h1>
-                    <p className="text-xs text-primary font-medium uppercase tracking-wider">Smart Learning</p>
+                    <p className="text-xs text-primary font-medium uppercase tracking-wider">Estudo Inteligente</p>
                 </div>
             </div>
             <nav className="flex-1 px-4 py-4 flex flex-col gap-2">
                 <button onClick={() => setCurrentView('dashboard')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentView === 'dashboard' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-500 hover:bg-primary/10 hover:text-primary'}`}>
                     <span className="material-symbols-outlined">dashboard</span>
-                    <span className="font-medium">Dashboard</span>
+                    <span className="font-medium">Painel</span>
                 </button>
                 <button onClick={() => setCurrentView('library')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentView === 'library' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-500 hover:bg-primary/10 hover:text-primary'}`}>
                     <span className="material-symbols-outlined">library_books</span>
-                    <span className="font-medium">Library</span>
+                    <span className="font-medium">Biblioteca</span>
                 </button>
                 <button onClick={() => setCurrentView('ai-workspace')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentView === 'ai-workspace' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-500 hover:bg-primary/10 hover:text-primary'}`}>
                     <span className="material-symbols-outlined">psychology</span>
-                    <span className="font-medium">AI Workspace</span>
+                    <span className="font-medium">Espaço IA</span>
                 </button>
                 <div className="mt-8 px-4">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Personal</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Pessoal</p>
                 </div>
                 <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-primary/10 hover:text-primary transition-all">
                     <span className="material-symbols-outlined">history</span>
-                    <span className="font-medium">Recent Activity</span>
+                    <span className="font-medium">Atividade Recente</span>
                 </button>
                 <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-primary/10 hover:text-primary transition-all">
                     <span className="material-symbols-outlined">star</span>
-                    <span className="font-medium">Favorites</span>
+                    <span className="font-medium">Favoritos</span>
                 </button>
             </nav>
             <div className="p-4 border-t border-primary/10">
                 <button onClick={() => setCurrentView('settings')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all w-full ${currentView === 'settings' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-500 hover:bg-primary/10 hover:text-primary'}`}>
                     <span className="material-symbols-outlined">settings</span>
-                    <span className="font-medium">Settings</span>
+                    <span className="font-medium">Configurações</span>
                 </button>
             </div>
         </aside>
