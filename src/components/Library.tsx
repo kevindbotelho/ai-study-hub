@@ -1,92 +1,74 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
-const libraryData = [
-    {
-        id: "1",
-        title: "Quantum Computing Basics",
-        description: "Understanding qubits, entanglement, and how quantum interference allows us to solve complex problems...",
-        type: "youtube",
-        readTime: "12m read",
-        date: "Today, 10:23 AM",
-        tags: ["#Tech", "#Science"]
-    },
-    {
-        id: "2",
-        title: "Thesis_Final_Draft.pdf",
-        description: "Final review of the cognitive architecture chapter, focusing on the integration of neural symbolic layers...",
-        type: "article",
-        readTime: "25m read",
-        date: "Yesterday, 4:45 PM",
-        tags: ["#Education", "#PDF"]
-    },
-    {
-        id: "3",
-        title: "Latest ML Papers",
-        description: "Summary of the Top 5 papers from NeurIPS 2024 concerning efficient transformer fine-tuning...",
-        type: "ai",
-        readTime: "10m read",
-        date: "Oct 12, 2:30 PM",
-        tags: ["#AI"]
-    },
-    {
-        id: "4",
-        title: "UX Design Trends 2024",
-        description: "Aggregated insights from the r/UXDesign community discussions.",
-        type: "reddit",
-        readTime: "8m read",
-        date: "5h ago",
-        tags: ["#Design"]
-    },
-    {
-        id: "5",
-        title: "The Future of Neural Networks",
-        description: "AI-generated summary of the latest research paper from DeepMind.",
-        type: "ai",
-        readTime: "15m read",
-        date: "Yesterday",
-        tags: ["#Research"]
-    },
-    {
-        id: "6",
-        title: "Tailwind CSS Best Practices",
-        description: "Key takeaways from the official documentary and developer guides.",
-        type: "youtube",
-        readTime: "5m read",
-        date: "1 week ago",
-        tags: ["#Dev"]
+const categories = ["Todos", "Resumos do YouTube", "Discussões no Reddit", "Textos em PDF", "Notas Pessoais"];
+
+// Helper to map the source_type correctly to styles and text (similar to Dashboard, but adapted for Library cards)
+const getIconAndColors = (type: string) => {
+    switch (type.toLowerCase()) {
+        case 'youtube':
+            return { icon: 'play_circle', bg: 'bg-red-50', text: 'text-red-500' };
+        case 'article':
+        case 'pdf':
+            return { icon: 'picture_as_pdf', bg: 'bg-blue-50', text: 'text-blue-500' };
+        case 'reddit':
+            return { icon: 'forum', bg: 'bg-orange-50', text: 'text-orange-500' };
+        case 'ai':
+        case 'web':
+        default:
+            return { icon: 'language', bg: 'bg-primary/10', text: 'text-primary' };
     }
-];
-
-const categories = ["All", "YouTube Summaries", "Reddit Cases", "AI Requests"];
+};
 
 export function Library() {
-    const [activeCategory, setActiveCategory] = useState("All");
+    const [activeCategory, setActiveCategory] = useState("Todos");
+    const [libraryData, setLibraryData] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchLibraryData = async () => {
+            const { data, error } = await supabase
+                .from('summaries')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("Erro ao buscar biblioteca:", error);
+            } else {
+                setLibraryData(data || []);
+            }
+            setLoading(false);
+        };
+
+        fetchLibraryData();
+    }, []);
 
     const getFilteredData = () => {
-        if (activeCategory === "All") return libraryData;
-        if (activeCategory === "YouTube Summaries") return libraryData.filter(item => item.type === 'youtube');
-        if (activeCategory === "Reddit Cases") return libraryData.filter(item => item.type === 'reddit');
-        if (activeCategory === "AI Requests") return libraryData.filter(item => item.type === 'ai');
+        if (activeCategory === "Todos") return libraryData;
+        if (activeCategory === "Resumos do YouTube") return libraryData.filter(item => item.source_type === 'youtube');
+        if (activeCategory === "Discussões no Reddit") return libraryData.filter(item => item.source_type === 'reddit');
+        if (activeCategory === "Textos em PDF") return libraryData.filter(item => item.source_type === 'article' || item.source_type === 'pdf');
+        if (activeCategory === "Notas Pessoais") return libraryData.filter(item => item.source_type === 'note');
         return libraryData;
     };
 
-    const getIconAndColors = (type: string) => {
-        switch (type) {
-            case 'youtube':
-                return { icon: 'play_circle', bg: 'bg-red-50', text: 'text-red-500' };
-            case 'article':
-                return { icon: 'description', bg: 'bg-blue-50', text: 'text-blue-500' };
-            case 'reddit':
-                return { icon: 'forum', bg: 'bg-orange-50', text: 'text-orange-500' };
-            case 'ai':
-                return { icon: 'auto_awesome', bg: 'bg-primary/10', text: 'text-primary' };
-            default:
-                return { icon: 'note', bg: 'bg-slate-100', text: 'text-slate-500' };
-        }
+    // Helper for formatting date
+    const formatTimeAgo = (dateString: string) => {
+        const diff = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / (1000 * 60 * 60));
+        if (diff < 1) return 'Agora mesmo';
+        if (diff < 24) return `Há ${diff}h`;
+        return `Há ${Math.floor(diff / 24)}d`;
     };
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full">
+            <div className="mb-6 flex justify-between items-end">
+                <div>
+                    <h2 className="text-2xl font-bold">Sua Biblioteca</h2>
+                    <p className="text-slate-500 text-sm">Pesquise, filtre e acesse todos os seus resumos.</p>
+                </div>
+            </div>
+
             {/* Filters */}
             <div className="flex gap-2 pb-6 overflow-x-auto no-scrollbar w-full border-b border-primary/5 mb-6">
                 {categories.map((cat) => (
@@ -103,49 +85,81 @@ export function Library() {
                 ))}
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                {getFilteredData().map((item) => {
-                    const { icon, bg, text } = getIconAndColors(item.type);
-                    return (
-                        <div key={item.id} className="bg-white rounded-2xl p-5 shadow-sm border border-primary/5 flex flex-col gap-4 hover:shadow-md transition-shadow cursor-pointer group">
-                            <div className="flex justify-between items-start">
-                                <div className={`size-10 rounded-xl ${bg} flex items-center justify-center ${text}`}>
-                                    <span className="material-symbols-outlined">{icon}</span>
+            {/* Content */}
+            {loading ? (
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                    {getFilteredData().map((item) => {
+                        const { icon, bg, text } = getIconAndColors(item.source_type);
+
+                        // Parse tags if it's a string, or use the array directly
+                        let displayTags = [];
+                        if (Array.isArray(item.tags)) {
+                            displayTags = item.tags;
+                        } else if (typeof item.tags === 'string') {
+                            try {
+                                displayTags = JSON.parse(item.tags);
+                            } catch (e) {
+                                displayTags = [];
+                            }
+                        }
+
+                        return (
+                            <div key={item.id} className="bg-white rounded-2xl p-5 shadow-sm border border-primary/5 flex flex-col gap-4 hover:shadow-md transition-shadow cursor-pointer group">
+                                <div className="flex justify-between items-start">
+                                    <div className={`size-10 rounded-xl ${bg} flex items-center justify-center ${text}`}>
+                                        <span className="material-symbols-outlined">{icon}</span>
+                                    </div>
+                                    <button className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50 p-1 rounded-md">
+                                        <span className="material-symbols-outlined">more_horiz</span>
+                                    </button>
                                 </div>
-                                <button className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50 p-1 rounded-md">
-                                    <span className="material-symbols-outlined">more_horiz</span>
-                                </button>
-                            </div>
 
-                            <div>
-                                <h3 className="font-bold text-slate-900 leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                                    {item.title}
-                                </h3>
-                                <p className="text-sm text-slate-500 mt-1 line-clamp-2">
-                                    {item.description}
-                                </p>
-                            </div>
-
-                            <div className="flex flex-wrap gap-2 mt-auto">
-                                {item.tags.map((tag, idx) => (
-                                    <span key={idx} className="px-2.5 py-0.5 bg-background-light text-slate-600 border border-slate-200 text-[10px] font-bold rounded-full uppercase tracking-wider">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-
-                            <div className="flex justify-between items-center mt-2 pt-4 border-t border-slate-50">
-                                <div className="flex items-center gap-1.5 text-slate-400">
-                                    <span className="material-symbols-outlined text-[14px]">schedule</span>
-                                    <span className="text-[11px] font-medium">{item.readTime}</span>
+                                <div>
+                                    <h3 className="font-bold text-slate-900 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                                        {item.title}
+                                    </h3>
+                                    <p className="text-sm text-slate-500 mt-1 line-clamp-2">
+                                        {item.description}
+                                    </p>
                                 </div>
-                                <span className="text-[11px] text-slate-400 font-medium">{item.date}</span>
+
+                                <div className="flex flex-wrap gap-2 mt-auto">
+                                    {displayTags && displayTags.length > 0 ? (
+                                        displayTags.map((tag: string, idx: number) => (
+                                            <span key={idx} className="px-2.5 py-0.5 bg-slate-50 text-slate-600 border border-slate-200 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                                                {tag}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="px-2.5 py-0.5 bg-slate-50 text-slate-400 border border-slate-100 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                                            #{item.category}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="flex justify-between items-center mt-2 pt-4 border-t border-slate-50">
+                                    <div className="flex items-center gap-1.5 text-slate-400">
+                                        <span className="material-symbols-outlined text-[14px]">schedule</span>
+                                        <span className="text-[11px] font-medium">{item.read_time || '5 MIN READ'}</span>
+                                    </div>
+                                    <span className="text-[11px] text-slate-400 font-medium">{formatTimeAgo(item.created_at)}</span>
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </div>
+                        );
+                    })}
+                </div>
+            )}
+
+            {!loading && getFilteredData().length === 0 && (
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-400 mt-10">
+                    <span className="material-symbols-outlined text-4xl mb-4 opacity-50">search_off</span>
+                    <p>Nenhum resumo encontrado nesta categoria.</p>
+                </div>
+            )}
         </div>
     );
 }
