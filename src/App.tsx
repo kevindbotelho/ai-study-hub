@@ -15,7 +15,7 @@ function App() {
     <div className="flex h-screen overflow-hidden bg-background-light font-display text-slate-900">
       <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
       <main className="flex-1 flex flex-col overflow-hidden">
-        {currentView !== 'ai-workspace' && currentView !== 'settings' && <Header />}
+        {currentView !== 'ai-workspace' && currentView !== 'settings' && <Header currentView={currentView} />}
 
         <section className={`flex-1 overflow-y-auto custom-scrollbar ${currentView === 'ai-workspace' || currentView === 'settings' ? 'p-6' : 'p-8'}`}>
           <div className="mx-auto w-full min-h-full max-w-7xl">
