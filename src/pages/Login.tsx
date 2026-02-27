@@ -60,7 +60,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
     }
 
     return (
-        <div className="flex w-full h-screen bg-white font-display">
+        <div className="flex w-full h-screen bg-white font-display overflow-hidden">
             {/* Left Column: Background Image */}
             <div className="relative hidden lg:flex flex-col w-[45%] h-full">
                 <img
@@ -94,9 +94,9 @@ export function Login({ onLoginSuccess }: LoginProps) {
             </div>
 
             {/* Right Column: Form */}
-            <div className="flex flex-col items-center justify-center w-full lg:w-[55%] h-full p-6 md:p-10 lg:p-16 overflow-y-auto">
-                <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500 my-auto">
-                    <div className="text-center mb-8">
+            <div className="flex flex-col items-center justify-center w-full lg:w-[55%] h-full p-4 sm:p-6 md:p-8 lg:p-10 no-scrollbar overflow-y-auto">
+                <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-500 my-auto">
+                    <div className="text-center mb-6">
                         <h1 className="text-3xl font-bold text-slate-900 mb-2">
                             {isLogin ? 'Acesse sua conta' : 'Crie sua conta'}
                         </h1>
@@ -170,7 +170,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
 
                         {isLogin && (
                             <div className="flex justify-end pt-1">
-                                <a href="#" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
+                                <a href="#" className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
                                     Esqueceu a senha?
                                 </a>
                             </div>
@@ -179,7 +179,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md shadow-primary/20 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:hover:shadow-md transition-all flex justify-center items-center gap-2 mt-2"
+                            className="w-full py-2.5 bg-primary text-white font-bold rounded-xl shadow-md shadow-primary/20 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:hover:shadow-md transition-all flex justify-center items-center gap-2 mt-4"
                         >
                             {loading ? (
                                 <span className="material-symbols-outlined animate-spin text-sm">sync</span>
@@ -197,7 +197,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
                     <button
                         onClick={handleGoogleLogin}
                         type="button"
-                        className="w-full py-3 bg-white text-slate-700 font-bold rounded-xl border-2 border-slate-100 shadow-sm hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center justify-center gap-3"
+                        className="w-full py-2.5 bg-white text-slate-700 font-bold rounded-xl border-2 border-slate-100 shadow-sm hover:bg-slate-50 hover:border-slate-200 transition-all flex items-center justify-center gap-3"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
