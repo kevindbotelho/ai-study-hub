@@ -18,7 +18,7 @@ function App() {
         {currentView !== 'ai-workspace' && currentView !== 'settings' && <Header />}
 
         <section className={`flex-1 overflow-y-auto custom-scrollbar ${currentView === 'ai-workspace' || currentView === 'settings' ? 'p-6' : 'p-8'}`}>
-          <div className="mx-auto w-full h-full max-w-7xl">
+          <div className="mx-auto w-full min-h-full max-w-7xl">
             {currentView === 'dashboard' && (
               <div className="flex flex-col gap-8">
                 <RecentSummaries />
