@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+@theme {
+  --font-display: "Space Grotesk", sans-serif;
+
+  --color-primary: #8a71d6;
+  --color-background-light: #f6f6f8;
+  --color-background-dark: #16131f;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #8a71d644;
+    border-radius: 10px;
+  }
+}

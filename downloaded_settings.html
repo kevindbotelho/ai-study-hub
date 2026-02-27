@@ -1,0 +1,124 @@
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile Settings Page</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8a71d6",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#16131f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10 px-4 py-4">
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-primary/10 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back</span>
+</button>
+<div>
+<h1 class="text-xl font-bold leading-tight">Settings</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">Manage your profile and preferences</p>
+</div>
+</div>
+</header>
+<!-- Navigation Tabs (Mobile adaptation of categories) -->
+<nav class="flex overflow-x-auto border-b border-primary/10 px-4 scrollbar-hide">
+<a class="flex-none py-4 px-3 text-sm font-semibold border-b-2 border-primary text-primary" href="#">Profile</a>
+<a class="flex-none py-4 px-3 text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent" href="#">Account</a>
+<a class="flex-none py-4 px-3 text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent" href="#">Appearance</a>
+<a class="flex-none py-4 px-3 text-sm font-medium text-slate-500 dark:text-slate-400 border-b-2 border-transparent" href="#">Integrations</a>
+</nav>
+<!-- Content -->
+<main class="flex-1 p-4 max-w-lg mx-auto w-full">
+<!-- Profile Picture Section -->
+<section class="flex flex-col items-center py-6 gap-4">
+<div class="relative">
+<div class="size-24 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="Professional user profile avatar headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7UP9vAdh7JTKMa47yliblUHKc627Qe-tUS2VKr1aNE8LcJ3BzuG87Ycw_aGmqa8gLiZ5ab3iH-orXjG8_F_0nOcwaqF1tmFD8m4lO5YZ_VsFLFei6IATv-zNEr_sjhJpZMYGoRkjvD1CXOE09RISyjMvKg9Y2qPWtYbGoW0fOZVy3HznseF87z9OuQkzBHDsW3QSGQNd1Tw9jK3mwjMTXUxpKi-3EmYaQELpuq5m_deoGDyahIAzraKtsVzvwPUH_kPAtM_kc5y0"/>
+</div>
+<button class="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-lg border-2 border-white dark:border-slate-800">
+<span class="material-symbols-outlined text-sm block">edit</span>
+</button>
+</div>
+<button class="px-5 py-2 bg-primary/10 text-primary text-sm font-semibold rounded-full hover:bg-primary/20 transition-colors">
+                Change Photo
+            </button>
+</section>
+<!-- Form Fields -->
+<form class="space-y-5">
+<div class="space-y-1.5">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Full Name</label>
+<input class="w-full px-4 py-3 rounded-xl border border-primary/20 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all" type="text" value="Alex Rivera"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Email Address</label>
+<input class="w-full px-4 py-3 rounded-xl border border-primary/10 bg-slate-100 dark:bg-slate-900 text-slate-400 cursor-not-allowed" disabled="" type="email" value="alex.rivera@research.ai"/>
+<p class="text-[10px] text-slate-400 ml-1">Email cannot be changed once verified.</p>
+</div>
+<div class="space-y-1.5">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Profession / Role</label>
+<div class="relative">
+<select class="w-full appearance-none px-4 py-3 rounded-xl border border-primary/20 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all pr-10">
+<option>Student</option>
+<option selected="">Researcher</option>
+<option>Data Scientist</option>
+<option>Academic Professor</option>
+<option>Independent Professional</option>
+</select>
+<div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</div>
+</div>
+</div>
+<div class="pt-8 flex flex-col gap-3">
+<button class="w-full py-4 bg-primary text-white font-bold rounded-full shadow-lg shadow-primary/20 active:scale-[0.98] transition-all" type="submit">
+                    Save Changes
+                </button>
+<button class="w-full py-4 text-slate-500 dark:text-slate-400 font-semibold hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors" type="button">
+                    Cancel
+                </button>
+</div>
+</form>
+</main>
+<!-- Bottom Navigation Bar -->
+<div class="mt-auto border-t border-primary/10 bg-white dark:bg-slate-900 px-4 pb-6 pt-2 flex justify-between items-center">
+<a class="flex flex-1 flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<p class="text-[10px] font-medium uppercase tracking-wider">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">search</span>
+<p class="text-[10px] font-medium uppercase tracking-wider">Research</p>
+</a>
+<a class="flex flex-1 flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<p class="text-[10px] font-medium uppercase tracking-wider">AI Lab</p>
+</a>
+<a class="flex flex-1 flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-[1]">settings</span>
+<p class="text-[10px] font-medium uppercase tracking-wider">Settings</p>
+</a>
+</div>
+</body></html>
