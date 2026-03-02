@@ -9,6 +9,7 @@ import { AINewsPortal } from './components/AINewsPortal';
 import { Library } from './components/Library';
 import { AIWorkspace } from './components/AIWorkspace';
 import { Settings } from './components/Settings';
+import { About } from './components/About';
 import Login from './pages/Login';
 
 function App() {
@@ -49,7 +50,7 @@ function App() {
     <div className="flex h-screen overflow-hidden bg-background-light font-display text-slate-900">
       <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
       <main className="flex-1 flex flex-col overflow-hidden">
-        {currentView !== 'ai-workspace' && currentView !== 'settings' && <Header currentView={currentView} session={session} />}
+        {currentView !== 'ai-workspace' && currentView !== 'settings' && currentView !== 'about' && <Header currentView={currentView} session={session} />}
 
         <section className={`flex-1 overflow-y-auto custom-scrollbar ${currentView === 'ai-workspace' || currentView === 'settings' ? 'p-6' : 'p-8'}`}>
           <div className="mx-auto w-full min-h-full max-w-7xl">
@@ -67,6 +68,9 @@ function App() {
             )}
             {currentView === 'settings' && (
               <Settings />
+            )}
+            {currentView === 'about' && (
+              <About />
             )}
           </div>
         </section>
