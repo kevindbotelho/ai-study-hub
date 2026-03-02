@@ -19,9 +19,13 @@ Visualize os principais temas da semana e acompanhe os resumos gerados automatic
 ### 📝 Resumos Inteligentes
 Acesse conteúdos curados e refinados por IA para um aprendizado acelerado.
 
-![Lista de Conteúdos](coloque o link da imagem aqui)
+![Dashboard](https://github.com/user-attachments/assets/539547af-c10f-4087-bb70-5d8d8c312778)
 
-![Detalhe do Resumo](coloque o link da imagem aqui)
+![Biblioteca](https://github.com/user-attachments/assets/461709ad-e7ef-4cbb-86d6-f62c83413279)
+
+![Estúdio IA](https://github.com/user-attachments/assets/f6c6a35b-6cfe-4d7e-a2cd-2b27c7bfe4c6)
+
+![Configurações](https://github.com/user-attachments/assets/34e315d4-48e4-4e91-85d7-44e690ef7a05)
 
 ---
 
