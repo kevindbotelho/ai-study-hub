@@ -1,73 +1,73 @@
-# React + TypeScript + Vite
+# AI Study Hub 🧠🤖
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+O **AI Study Hub** nasceu com um propósito pessoal: estudar Inteligência Artificial usando a própria IA. Este projeto é um laboratório vivo onde exploro o potencial da colaboração Humano-IA, utilizando automações em **Python** e **n8n** para filtrar, resumir e organizar as principais notícias e avanços do mundo tecnológico.
 
-Currently, two official plugins are available:
+Tudo o que você vê aqui foi construído com o apoio do **Google Antigravity**, garantindo que as respostas sejam precisas, os resumos sejam inteligentes e a experiência de estudo seja otimizada.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+> [!TIP]
+> O AI Study Hub é uma ferramenta personalizada para quem deseja se manter atualizado no ecossistema de IA de forma automatizada e eficiente.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📸 Showcase
 
-## Expanding the ESLint configuration
+### 📊 Dashboard de Estudos
+Visualize os principais temas da semana e acompanhe os resumos gerados automaticamente.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+![Dashboard](coloque o link da imagem aqui)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 📝 Resumos Inteligentes
+Acesse conteúdos curados e refinados por IA para um aprendizado acelerado.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+![Lista de Conteúdos](coloque o link da imagem aqui)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+![Detalhe do Resumo](coloque o link da imagem aqui)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ✨ Funcionalidades Principais
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+*   **⚡ Automação com n8n:** Fluxos de trabalho automatizados que buscam notícias e conteúdos relevantes em tempo real.
+*   **🐍 Processamento Python:** Scripts robustos de Python para manipulação de dados e integração com APIs de IA.
+*   **🤖 Curadoria assisted-AI:** Os resumos são processados por modelos de linguagem e refinados via Antigravity para garantir máxima clareza.
+*   **📂 Organização Semântica:** Categorização inteligente dos estudos para facilitar a consulta futura.
+*   **🎨 Interface Moderna:** UI desenvolvida para ser limpa, rápida e inspiradora.
+
+---
+
+## 🛠️ Stack Tecnológica
+
+*   **Frontend:** [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
+*   **UI/UX:** [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
+*   **Backend:** [Supabase](https://supabase.com/) (PostgreSQL)
+*   **Automação & Workflow:** [n8n](https://n8n.io/) & [Python](https://www.python.org/)
+*   **AI Partner:** [Google Antigravity](https://github.com/google-deepmind/antigravity)
+
+---
+
+## 🚀 Como Executar Localmente
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/kevindbotelho/ai-study-hub.git
+   cd ai-study-hub
+   ```
+
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure as variáveis de ambiente:**
+   Crie um arquivo `.env` baseado no `.env.example` with suas credenciais do Supabase e n8n.
+
+4. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🤝 Créditos
+
+Desenvolvido por [Kevin Botelho](https://github.com/kevindbotelho) 🚀 através do Antigravity.
