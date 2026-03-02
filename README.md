@@ -8,25 +8,19 @@ Tudo o que você vê aqui foi construído com o apoio do **Google Antigravity**,
 > O AI Study Hub é uma ferramenta personalizada para quem deseja se manter atualizado no ecossistema de IA de forma automatizada e eficiente.
 
 ---
-
 ## 📸 Showcase
-
-### 📊 Dashboard de Estudos
+### 📊 Painel (Dashboard)
 Visualize os principais temas da semana e acompanhe os resumos gerados automaticamente.
-
-![Dashboard](coloque o link da imagem aqui)
-
-### 📝 Resumos Inteligentes
-Acesse conteúdos curados e refinados por IA para um aprendizado acelerado.
-
 ![Dashboard](https://github.com/user-attachments/assets/539547af-c10f-4087-bb70-5d8d8c312778)
-
+### 📚 Biblioteca
+Acesse todos os seus conteúdos curados e organizados de forma semântica.
 ![Biblioteca](https://github.com/user-attachments/assets/461709ad-e7ef-4cbb-86d6-f62c83413279)
-
+### 🧠 Estúdio IA
+Onde a mágica acontece. Refine seus estudos e interaja com a IA para aprofundar o conhecimento.
 ![Estúdio IA](https://github.com/user-attachments/assets/f6c6a35b-6cfe-4d7e-a2cd-2b27c7bfe4c6)
-
+### ⚙️ Configurações
+Gerencie suas integrações e personalize sua experiência de estudo.
 ![Configurações](https://github.com/user-attachments/assets/34e315d4-48e4-4e91-85d7-44e690ef7a05)
-
 ---
 
 ## ✨ Funcionalidades Principais
