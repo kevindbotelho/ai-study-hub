@@ -35,9 +35,9 @@ export const Sidebar = ({ currentView, setCurrentView }: SidebarProps) => {
                     <span className="material-symbols-outlined">history</span>
                     <span className="font-medium">Atividade Recente</span>
                 </button>
-                <button onClick={() => setCurrentView('about')} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${currentView === 'about' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-500 hover:bg-primary/10 hover:text-primary'}`}>
-                    <span className="material-symbols-outlined">info</span>
-                    <span className="font-medium">Sobre</span>
+                <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 hover:bg-primary/10 hover:text-primary transition-all">
+                    <span className="material-symbols-outlined">star</span>
+                    <span className="font-medium">Favoritos</span>
                 </button>
             </nav>
             <div className="p-4 border-t border-primary/10">
