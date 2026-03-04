@@ -10,10 +10,7 @@ export function AIWorkspace() {
     // Auto-scroll anchor
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const attachments = [
-        { id: 1, name: 'Lecture_Notes.pdf', icon: 'description' },
-        { id: 2, name: 'Research_Paper.pdf', icon: 'article' },
-    ];
+    const attachments: any[] = []; // Empty for now, will implement real file upload later
 
     useEffect(() => {
         if (!sessionId) {
@@ -41,6 +38,7 @@ export function AIWorkspace() {
             .channel(`chat_messages:session_id=eq.${sessionId}`)
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, payload => {
                 setMessages(prev => [...prev.filter(m => m.id !== payload.new.id), payload.new]);
+                setIsThinking(false); // Remove thinking state when new db message arrives
             })
             .subscribe();
 
@@ -82,23 +80,15 @@ export function AIWorkspace() {
         setMessages(prev => [...prev, tempUserMsg]);
         setIsThinking(true);
 
-        // Insert into DB
-        await supabase
+        // Insert into DB. The N8N webhook should listen to this insert to trigger the generative AI task.
+        const { error: insertError } = await supabase
             .from('chat_messages')
             .insert([{ session_id: currentSessionId, role: 'user', text: textToSend }]);
 
-        // Simulate AI Webhook / Worker Delay
-        setTimeout(async () => {
-            await supabase
-                .from('chat_messages')
-                .insert([{
-                    session_id: currentSessionId,
-                    role: 'ai',
-                    text: 'Entendido! Estou processando o seu material... Em um ambiente de produção real, neste momento o n8n estaria capturando essa requisição, lendo os seus PDFs enviados, passando pela API da OpenAI e salvando o resumo final aqui nesta tela.'
-                }]);
-
+        if (insertError) {
+            console.error("Failed to insert message", insertError);
             setIsThinking(false);
-        }, 2000);
+        }
     };
 
     return (
@@ -175,8 +165,8 @@ export function AIWorkspace() {
                                     <span className="material-symbols-outlined text-4xl">smart_toy</span>
                                 </div>
                                 <div className="max-w-md">
-                                    <h2 className="text-2xl font-bold mb-2">Boa tarde, Alex!</h2>
-                                    <p className="text-slate-500 text-sm">Como posso ajudar com o seu material de pesquisa hoje?</p>
+                                    <h2 className="text-2xl font-bold mb-2">Boa tarde, como posso ajudar?</h2>
+                                    <p className="text-slate-500 text-sm">Pronto para pesquisar, analisar ou criar materiais baseados em seus textos.</p>
                                 </div>
 
                                 {/* Quick Action Pills */}

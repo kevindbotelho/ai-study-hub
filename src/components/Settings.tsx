@@ -1,25 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import type { Session } from '@supabase/supabase-js';
 
 export function Settings() {
     const [activeTab, setActiveTab] = useState('Perfil');
-    const [name, setName] = useState('Alex Rivera');
-    const [role, setRole] = useState('Pesquisador');
+    const [name, setName] = useState('');
+    const [role, setRole] = useState('Estudante');
+    const [email, setEmail] = useState('');
+    const [session, setSession] = useState<Session | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
 
     const tabs = ['Perfil', 'Conta', 'Aparência', 'Integrações'];
 
-    const handleSave = (e: React.FormEvent) => {
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                setSession(session);
+                setName(session.user.user_metadata?.full_name || '');
+                setRole(session.user.user_metadata?.role || 'Estudante');
+                setEmail(session.user.email || '');
+            }
+        });
+    }, []);
+
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
         setSaveMessage('');
 
-        setTimeout(() => {
-            setIsSaving(false);
-            setSaveMessage('Configurações atualizadas de forma simulada!');
+        if (session) {
+            const { error } = await supabase.auth.updateUser({
+                data: { full_name: name, role: role }
+            });
 
-            setTimeout(() => setSaveMessage(''), 3000);
-        }, 1500);
+            if (error) {
+                console.error("Erro ao atualizar o perfil:", error);
+                setSaveMessage('Erro ao atualizar as configurações. Tente novamente.');
+            } else {
+                setSaveMessage('Configurações atualizadas com sucesso!');
+            }
+        }
+
+        setIsSaving(false);
+        setTimeout(() => setSaveMessage(''), 3000);
     };
 
     return (
@@ -68,12 +92,8 @@ export function Settings() {
                                 {/* Profile Picture Section */}
                                 <section className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-10 pb-10 border-b border-slate-100">
                                     <div className="relative">
-                                        <div className="size-24 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border-4 border-white shadow-md">
-                                            <img
-                                                alt="Profile"
-                                                className="w-full h-full object-cover"
-                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7UP9vAdh7JTKMa47yliblUHKc627Qe-tUS2VKr1aNE8LcJ3BzuG87Ycw_aGmqa8gLiZ5ab3iH-orXjG8_F_0nOcwaqF1tmFD8m4lO5YZ_VsFLFei6IATv-zNEr_sjhJpZMYGoRkjvD1CXOE09RISyjMvKg9Y2qPWtYbGoW0fOZVy3HznseF87z9OuQkzBHDsW3QSGQNd1Tw9jK3mwjMTXUxpKi-3EmYaQELpuq5m_deoGDyahIAzraKtsVzvwPUH_kPAtM_kc5y0"
-                                            />
+                                        <div className="size-24 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border-4 border-white shadow-md text-primary text-3xl font-bold">
+                                            {name?.[0]?.toUpperCase() || email?.[0]?.toUpperCase() || 'U'}
                                         </div>
                                         <button className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-lg border-2 border-white hover:scale-110 transition-transform">
                                             <span className="material-symbols-outlined text-sm block">edit</span>
@@ -106,7 +126,7 @@ export function Settings() {
                                             className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed shadow-inner"
                                             disabled
                                             type="email"
-                                            value="alex.rivera@research.ai"
+                                            value={email}
                                         />
                                         <p className="text-xs text-slate-400 ml-1">O e-mail não pode ser alterado após verificado.</p>
                                     </div>
