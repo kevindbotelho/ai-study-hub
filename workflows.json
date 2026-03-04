@@ -1,63 +1,110 @@
 {
   "data": [
     {
-      "updatedAt": "2026-03-04T23:00:30.278Z",
-      "createdAt": "2026-03-04T22:48:33.728Z",
-      "id": "pGMnTwDhfX1CWLoR",
-      "name": "AI Study Hub - Gemini Chat",
-      "active": false,
+      "updatedAt": "2026-03-04T23:20:32.334Z",
+      "createdAt": "2026-03-04T23:05:23.906Z",
+      "id": "QJ9GymM60U1K8lhi",
+      "name": "AI Study Hub - Gemini Agent",
+      "active": true,
       "isArchived": false,
       "nodes": [
         {
           "parameters": {
             "httpMethod": "POST",
             "path": "ai-study-hub-chat",
-            "responseMode": "lastNode",
+            "responseMode": "responseNode",
             "options": {}
           },
           "name": "Webhook",
           "type": "n8n-nodes-base.webhook",
           "typeVersion": 1,
           "position": [
-            256,
-            304
+            0,
+            0
           ],
           "webhookId": "ai-study-hub-chat",
-          "id": "c611e943-7c71-402c-ab57-73093ea0a80f"
+          "id": "f28e420c-9a21-4aad-9508-1a6a8b248a79"
         },
         {
           "parameters": {
-            "resource": "message",
-            "operation": "generate",
-            "model": "gemini-1.5-flash",
-            "prompt": "={{ $json.body.text }}",
-            "additionalFields": {}
+            "text": "={{ $json.body.text }}",
+            "options": {
+              "systemMessage": "Você é o assistente virtual do AI Study Hub. Responda o usuário de forma clara, educada e direta em português brasileiro."
+            }
           },
-          "name": "Google Gemini",
-          "type": "n8n-nodes-base.googleGemini",
+          "name": "AI Agent",
+          "type": "@n8n/n8n-nodes-langchain.agent",
           "typeVersion": 1,
           "position": [
-            464,
-            304
+            256,
+            0
           ],
-          "id": "bd0306ea-6421-4637-a7cd-a697fc3e941b"
+          "id": "c0770120-a219-4d1d-a9f2-61d84744294f"
+        },
+        {
+          "parameters": {
+            "modelName": "models/gemini-3.1-pro-preview",
+            "options": {}
+          },
+          "name": "Google Gemini Chat Model",
+          "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+          "typeVersion": 1,
+          "position": [
+            208,
+            208
+          ],
+          "id": "e1932f34-06b1-4110-8e49-4642add8bec1",
+          "credentials": {
+            "googlePalmApi": {
+              "id": "0PHoyk90TNWKIt2N",
+              "name": "Google Gemini(PaLM) Api account"
+            }
+          }
         },
         {
           "parameters": {},
+          "name": "Window Buffer Memory",
+          "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+          "typeVersion": 1,
+          "position": [
+            352,
+            208
+          ],
+          "id": "94bb4bef-c6f8-4bea-9d00-1f60bc56cdb8"
+        },
+        {
+          "parameters": {
+            "operation": "insert"
+          },
           "name": "Supabase Insert",
           "type": "n8n-nodes-base.supabase",
           "typeVersion": 1,
           "position": [
-            656,
-            304
+            560,
+            0
           ],
-          "id": "682352e5-721c-4460-8741-0880637c37aa",
+          "id": "43cbb962-58e2-426f-8cc0-79a0aa042cd4",
           "credentials": {
             "supabaseApi": {
               "id": "DeO6PTzQovwCawxj",
               "name": "Supabase account"
             }
           }
+        },
+        {
+          "parameters": {
+            "respondWith": "json",
+            "responseBody": "={\n  \"response\": \"{{ $json.output }}\"\n}",
+            "options": {}
+          },
+          "name": "Respond to Webhook",
+          "type": "n8n-nodes-base.respondToWebhook",
+          "typeVersion": 1,
+          "position": [
+            752,
+            0
+          ],
+          "id": "c43e37cb-7872-4dfd-a793-aa4c17fefdd5"
         }
       ],
       "connections": {
@@ -65,14 +112,36 @@
           "main": [
             [
               {
-                "node": "Google Gemini",
+                "node": "AI Agent",
                 "type": "main",
                 "index": 0
               }
             ]
           ]
         },
-        "Google Gemini": {
+        "Google Gemini Chat Model": {
+          "ai_languageModel": [
+            [
+              {
+                "node": "AI Agent",
+                "type": "ai_languageModel",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Window Buffer Memory": {
+          "ai_memory": [
+            [
+              {
+                "node": "AI Agent",
+                "type": "ai_memory",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "AI Agent": {
           "main": [
             [
               {
@@ -85,7 +154,13 @@
         },
         "Supabase Insert": {
           "main": [
-            []
+            [
+              {
+                "node": "Respond to Webhook",
+                "type": "main",
+                "index": 0
+              }
+            ]
           ]
         }
       },
@@ -98,19 +173,185 @@
         "templateCredsSetupCompleted": true
       },
       "pinData": {},
-      "versionId": "034a8454-274f-4cc5-8bf2-3fd105765a98",
-      "activeVersionId": null,
-      "triggerCount": 0,
+      "versionId": "02f92b32-334a-417d-8808-b39076c3e25f",
+      "activeVersionId": "02f92b32-334a-417d-8808-b39076c3e25f",
+      "triggerCount": 1,
       "shared": [
         {
-          "updatedAt": "2026-03-04T22:48:33.790Z",
-          "createdAt": "2026-03-04T22:48:33.790Z",
+          "updatedAt": "2026-03-04T23:05:23.910Z",
+          "createdAt": "2026-03-04T23:05:23.910Z",
           "role": "workflow:owner",
-          "workflowId": "pGMnTwDhfX1CWLoR",
+          "workflowId": "QJ9GymM60U1K8lhi",
           "projectId": "xNYKtUwfvdY3hoE1"
         }
       ],
-      "activeVersion": null,
+      "activeVersion": {
+        "updatedAt": "2026-03-04T23:21:33.000Z",
+        "createdAt": "2026-03-04T23:20:32.335Z",
+        "versionId": "02f92b32-334a-417d-8808-b39076c3e25f",
+        "workflowId": "QJ9GymM60U1K8lhi",
+        "nodes": [
+          {
+            "parameters": {
+              "httpMethod": "POST",
+              "path": "ai-study-hub-chat",
+              "responseMode": "responseNode",
+              "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+              0,
+              0
+            ],
+            "webhookId": "ai-study-hub-chat",
+            "id": "f28e420c-9a21-4aad-9508-1a6a8b248a79"
+          },
+          {
+            "parameters": {
+              "text": "={{ $json.body.text }}",
+              "options": {
+                "systemMessage": "Você é o assistente virtual do AI Study Hub. Responda o usuário de forma clara, educada e direta em português brasileiro."
+              }
+            },
+            "name": "AI Agent",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 1,
+            "position": [
+              256,
+              0
+            ],
+            "id": "c0770120-a219-4d1d-a9f2-61d84744294f"
+          },
+          {
+            "parameters": {
+              "modelName": "models/gemini-3.1-pro-preview",
+              "options": {}
+            },
+            "name": "Google Gemini Chat Model",
+            "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+            "typeVersion": 1,
+            "position": [
+              208,
+              208
+            ],
+            "id": "e1932f34-06b1-4110-8e49-4642add8bec1",
+            "credentials": {
+              "googlePalmApi": {
+                "id": "0PHoyk90TNWKIt2N",
+                "name": "Google Gemini(PaLM) Api account"
+              }
+            }
+          },
+          {
+            "parameters": {},
+            "name": "Window Buffer Memory",
+            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+            "typeVersion": 1,
+            "position": [
+              352,
+              208
+            ],
+            "id": "94bb4bef-c6f8-4bea-9d00-1f60bc56cdb8"
+          },
+          {
+            "parameters": {
+              "operation": "insert"
+            },
+            "name": "Supabase Insert",
+            "type": "n8n-nodes-base.supabase",
+            "typeVersion": 1,
+            "position": [
+              560,
+              0
+            ],
+            "id": "43cbb962-58e2-426f-8cc0-79a0aa042cd4",
+            "credentials": {
+              "supabaseApi": {
+                "id": "DeO6PTzQovwCawxj",
+                "name": "Supabase account"
+              }
+            }
+          },
+          {
+            "parameters": {
+              "respondWith": "json",
+              "responseBody": "={\n  \"response\": \"{{ $json.output }}\"\n}",
+              "options": {}
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+              752,
+              0
+            ],
+            "id": "c43e37cb-7872-4dfd-a793-aa4c17fefdd5"
+          }
+        ],
+        "connections": {
+          "Webhook": {
+            "main": [
+              [
+                {
+                  "node": "AI Agent",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Google Gemini Chat Model": {
+            "ai_languageModel": [
+              [
+                {
+                  "node": "AI Agent",
+                  "type": "ai_languageModel",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Window Buffer Memory": {
+            "ai_memory": [
+              [
+                {
+                  "node": "AI Agent",
+                  "type": "ai_memory",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "AI Agent": {
+            "main": [
+              [
+                {
+                  "node": "Supabase Insert",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Supabase Insert": {
+            "main": [
+              [
+                {
+                  "node": "Respond to Webhook",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          }
+        },
+        "authors": "Kevin Botelho",
+        "name": "Version 02f92b32",
+        "description": "",
+        "autosaved": true
+      },
       "tags": []
     }
   ],

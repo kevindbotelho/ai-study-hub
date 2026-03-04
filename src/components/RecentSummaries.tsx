@@ -36,6 +36,14 @@ const getSourceStyles = (sourceType: string) => {
                 icon: 'edit_document',
                 type: 'Nota',
             };
+        case 'ai':
+            return {
+                bgColor: 'bg-emerald-50',
+                textColor: 'text-emerald-600',
+                fillClass: 'text-emerald-500',
+                icon: 'auto_awesome',
+                type: 'IA',
+            };
         default:
             return {
                 bgColor: 'bg-slate-50',

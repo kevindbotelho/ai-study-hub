@@ -12,6 +12,18 @@ export function AIWorkspace() {
 
     const attachments: any[] = []; // Empty for now, will implement real file upload later
 
+    const parseMessageAsCard = (text: string) => {
+        try {
+            const parsed = JSON.parse(text);
+            if (parsed.type === 'summary' || parsed.type === 'flashcard') {
+                return parsed;
+            }
+        } catch (e) {
+            return null;
+        }
+        return null;
+    };
+
     useEffect(() => {
         if (!sessionId) {
             setMessages([]);
@@ -102,6 +114,24 @@ export function AIWorkspace() {
 
                 if (!response.ok) {
                     throw new Error(`Erro API n8n: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Tratar a resposta para persistir em Resumos caso seja um Card
+                if (data && data.response) {
+                    const parsedCard = parseMessageAsCard(data.response);
+                    if (parsedCard) {
+                        const { data: { user } } = await supabase.auth.getUser();
+                        await supabase.from('summaries').insert([{
+                            title: parsedCard.title,
+                            description: parsedCard.description,
+                            category: parsedCard.category || 'Geral',
+                            source_type: 'ai',
+                            read_time: '1 min',
+                            user_id: user?.id
+                        }]);
+                    }
                 }
 
                 // O n8n vai retornar a resposta via nó "Respond to Webhook", 
@@ -230,8 +260,30 @@ export function AIWorkspace() {
                                                 <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 mt-1">
                                                     <span className="material-symbols-outlined text-sm">auto_awesome</span>
                                                 </div>
-                                                <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl rounded-tl-sm text-slate-700 shadow-sm">
-                                                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                                                <div className="bg-slate-50 border border-slate-100 p-4 rounded-2xl rounded-tl-sm text-slate-700 shadow-sm w-full">
+                                                    {(() => {
+                                                        const card = parseMessageAsCard(msg.text);
+                                                        if (card) {
+                                                            return (
+                                                                <div className="border border-primary/20 bg-white rounded-xl p-5 shadow-sm space-y-3">
+                                                                    <div className="flex items-center gap-2 mb-2">
+                                                                        <span className="material-symbols-outlined text-primary text-xl">
+                                                                            {card.type === 'summary' ? 'description' : 'style'}
+                                                                        </span>
+                                                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 py-1 px-2 rounded-md">
+                                                                            {card.category || 'Geral'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <h4 className="text-lg font-bold text-slate-800">{card.title}</h4>
+                                                                    <p className="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">{card.description}</p>
+                                                                    <div className="pt-3 flex justify-end">
+                                                                        <span className="text-[10px] text-slate-400 font-medium tracking-wider uppercase">✨ Gerado por IA</span>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        }
+                                                        return <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>;
+                                                    })()}
                                                 </div>
                                             </div>
                                         ) : (
