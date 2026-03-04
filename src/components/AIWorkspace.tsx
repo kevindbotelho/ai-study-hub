@@ -91,7 +91,7 @@ export function AIWorkspace() {
         } else {
             try {
                 // Dispara o Webhook do N8N
-                await fetch('https://n8nkevin.vps-kinghost.net/webhook/ai-study-hub-chat', {
+                const response = await fetch('https://n8nkevin.vps-kinghost.net/webhook/ai-study-hub-chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -99,6 +99,16 @@ export function AIWorkspace() {
                         text: textToSend
                     })
                 });
+
+                if (!response.ok) {
+                    throw new Error(`Erro API n8n: ${response.status}`);
+                }
+
+                // O n8n vai retornar a resposta via nó "Respond to Webhook", 
+                // mas a UI principal já é atualizada via Supabase Realtime!
+                // Aqui apenas garantimos que terminou de carregar caso a web socket demore.
+                setIsThinking(false);
+
             } catch (err) {
                 console.error("Error triggering N8N automation:", err);
                 setIsThinking(false); // Remove loading state early if API call fails entirely

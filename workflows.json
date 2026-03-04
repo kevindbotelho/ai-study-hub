@@ -1,0 +1,118 @@
+{
+  "data": [
+    {
+      "updatedAt": "2026-03-04T23:00:30.278Z",
+      "createdAt": "2026-03-04T22:48:33.728Z",
+      "id": "pGMnTwDhfX1CWLoR",
+      "name": "AI Study Hub - Gemini Chat",
+      "active": false,
+      "isArchived": false,
+      "nodes": [
+        {
+          "parameters": {
+            "httpMethod": "POST",
+            "path": "ai-study-hub-chat",
+            "responseMode": "lastNode",
+            "options": {}
+          },
+          "name": "Webhook",
+          "type": "n8n-nodes-base.webhook",
+          "typeVersion": 1,
+          "position": [
+            256,
+            304
+          ],
+          "webhookId": "ai-study-hub-chat",
+          "id": "c611e943-7c71-402c-ab57-73093ea0a80f"
+        },
+        {
+          "parameters": {
+            "resource": "message",
+            "operation": "generate",
+            "model": "gemini-1.5-flash",
+            "prompt": "={{ $json.body.text }}",
+            "additionalFields": {}
+          },
+          "name": "Google Gemini",
+          "type": "n8n-nodes-base.googleGemini",
+          "typeVersion": 1,
+          "position": [
+            464,
+            304
+          ],
+          "id": "bd0306ea-6421-4637-a7cd-a697fc3e941b"
+        },
+        {
+          "parameters": {},
+          "name": "Supabase Insert",
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [
+            656,
+            304
+          ],
+          "id": "682352e5-721c-4460-8741-0880637c37aa",
+          "credentials": {
+            "supabaseApi": {
+              "id": "DeO6PTzQovwCawxj",
+              "name": "Supabase account"
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Webhook": {
+          "main": [
+            [
+              {
+                "node": "Google Gemini",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Google Gemini": {
+          "main": [
+            [
+              {
+                "node": "Supabase Insert",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Supabase Insert": {
+          "main": [
+            []
+          ]
+        }
+      },
+      "settings": {
+        "callerPolicy": "workflowsFromSameOwner",
+        "availableInMCP": false
+      },
+      "staticData": null,
+      "meta": {
+        "templateCredsSetupCompleted": true
+      },
+      "pinData": {},
+      "versionId": "034a8454-274f-4cc5-8bf2-3fd105765a98",
+      "activeVersionId": null,
+      "triggerCount": 0,
+      "shared": [
+        {
+          "updatedAt": "2026-03-04T22:48:33.790Z",
+          "createdAt": "2026-03-04T22:48:33.790Z",
+          "role": "workflow:owner",
+          "workflowId": "pGMnTwDhfX1CWLoR",
+          "projectId": "xNYKtUwfvdY3hoE1"
+        }
+      ],
+      "activeVersion": null,
+      "tags": []
+    }
+  ],
+  "nextCursor": null
+}
