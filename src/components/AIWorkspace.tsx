@@ -88,6 +88,21 @@ export function AIWorkspace() {
         if (insertError) {
             console.error("Failed to insert message", insertError);
             setIsThinking(false);
+        } else {
+            try {
+                // Dispara o Webhook do N8N
+                await fetch('https://n8nkevin.vps-kinghost.net/webhook/ai-study-hub-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: currentSessionId,
+                        text: textToSend
+                    })
+                });
+            } catch (err) {
+                console.error("Error triggering N8N automation:", err);
+                setIsThinking(false); // Remove loading state early if API call fails entirely
+            }
         }
     };
 
