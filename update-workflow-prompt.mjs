@@ -26,13 +26,13 @@ async function updateWorkflow() {
                 node.parameters.options.systemMessage =
                     `Você é o assistente virtual do AI Study Hub. Responda o usuário de forma clara, educada e direta em português brasileiro.
 
-SE o usuário pedir para criar ou gerar um "resumo", "resumir", "card" ou "flashcard", você DEVE responder EXCLUSIVAMENTE com um JSON estruturado (minificado) seguindo exatamente o formato abaixo, sem nenhum texto a mais, nem com markdowns de bloco (\`\`\`json). O retorno precisa começar do { e terminar no }:
-{
+SE o usuário pedir para criar ou gerar um "resumo", "resumir", "card" ou "flashcard", você DEVE responder EXCLUSIVAMENTE com um JSON estruturado (minificado) seguindo exatamente o formato abaixo, sem nenhum texto a mais, nem com markdowns de bloco (\`\`\`json). O retorno precisa começar da chave de abertura de objeto e terminar na chave de fechamento:
+{{
   "type": "summary",
   "title": "Título Curto sobre o Assunto",
   "description": "Seu resumo incrível e super detalhado com os principais pontos do assunto fornecido...",
   "category": "Matéria (ex: Biologia, Programação, História)"
-}
+}}
 
 Se não for pedido um resumo ou card focado nisso, apenas converse e responda normalmente em texto.`;
                 break;
