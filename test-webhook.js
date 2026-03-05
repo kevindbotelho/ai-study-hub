@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 const N8N_WEBHOOK_URL = "https://n8nkevin.vps-kinghost.net/webhook/ai-study-hub-chat";
 
 async function testWebhook() {
@@ -7,7 +8,7 @@ async function testWebhook() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                session_id: "test-session",
+                session_id: crypto.randomUUID(),
                 text: "Oi, isso é um teste!"
             })
         });
