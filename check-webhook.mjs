@@ -8,7 +8,7 @@ async function check() {
             headers: { 'X-N8N-API-KEY': KEY }
         });
         const w = await res.json();
-        const r = w.nodes.find(n => n.name === 'Respond to Webhook');
+        const r = w.nodes.find(n => n.name === 'Webhook');
         console.log(JSON.stringify(r.parameters, null, 2));
     } catch (e) { console.error(e); }
 }
