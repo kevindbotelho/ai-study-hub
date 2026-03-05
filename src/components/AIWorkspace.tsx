@@ -6,6 +6,7 @@ export function AIWorkspace() {
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState('');
     const [isThinking, setIsThinking] = useState(false);
+    const [approvedCards, setApprovedCards] = useState<string[]>([]); // Track which messages have had their cards approved or ignored
 
     // Auto-scroll anchor
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -15,7 +16,7 @@ export function AIWorkspace() {
     const parseMessageAsCard = (text: string) => {
         try {
             const parsed = JSON.parse(text);
-            if (parsed.type === 'summary' || parsed.type === 'flashcard') {
+            if (parsed.full_answer && parsed.summary && parsed.title) {
                 return parsed;
             }
         } catch (e) {
@@ -23,6 +24,24 @@ export function AIWorkspace() {
         }
         return null;
     };
+
+    const handleApproveCard = async (msgId: string, card: any) => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        await supabase.from('summaries').insert([{
+            title: card.title,
+            description: card.summary,
+            category: 'IA',
+            source_type: 'ai',
+            read_time: '1 min',
+            user_id: user.id
+        }]);
+
+        setApprovedCards(prev => [...prev, msgId]);
+    };
+
+
 
     useEffect(() => {
         if (!sessionId) {
@@ -116,23 +135,11 @@ export function AIWorkspace() {
                     throw new Error(`Erro API n8n: ${response.status}`);
                 }
 
-                const data = await response.json();
+                await response.json();
 
-                // Tratar a resposta para persistir em Resumos caso seja um Card
-                if (data && data.response) {
-                    const parsedCard = parseMessageAsCard(data.response);
-                    if (parsedCard) {
-                        const { data: { user } } = await supabase.auth.getUser();
-                        await supabase.from('summaries').insert([{
-                            title: parsedCard.title,
-                            description: parsedCard.description,
-                            category: parsedCard.category || 'Geral',
-                            source_type: 'ai',
-                            read_time: '1 min',
-                            user_id: user?.id
-                        }]);
-                    }
-                }
+                // A IA agora retorna um JSON estruturado. 
+                // A UI fará o parse disso na hora de exibir (Render), 
+                // e a inserção no banco da tb `summaries` ocorrerá APENAS quando o usuário clicar em "Aprovar".
 
                 // O n8n vai retornar a resposta via nó "Respond to Webhook", 
                 // mas a UI principal já é atualizada via Supabase Realtime!
@@ -264,21 +271,41 @@ export function AIWorkspace() {
                                                     {(() => {
                                                         const card = parseMessageAsCard(msg.text);
                                                         if (card) {
+                                                            const isHandled = approvedCards.includes(msg.id);
                                                             return (
-                                                                <div className="border border-primary/20 bg-white rounded-xl p-5 shadow-sm space-y-3">
-                                                                    <div className="flex items-center gap-2 mb-2">
-                                                                        <span className="material-symbols-outlined text-primary text-xl">
-                                                                            {card.type === 'summary' ? 'description' : 'style'}
-                                                                        </span>
-                                                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 py-1 px-2 rounded-md">
-                                                                            {card.category || 'Geral'}
-                                                                        </span>
+                                                                <div className="space-y-4 w-full">
+                                                                    <div className="text-sm leading-relaxed whitespace-pre-wrap text-slate-700 markdown-body">
+                                                                        {card.full_answer}
                                                                     </div>
-                                                                    <h4 className="text-lg font-bold text-slate-800">{card.title}</h4>
-                                                                    <p className="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">{card.description}</p>
-                                                                    <div className="pt-3 flex justify-end">
-                                                                        <span className="text-[10px] text-slate-400 font-medium tracking-wider uppercase">✨ Gerado por IA</span>
-                                                                    </div>
+
+                                                                    {!isHandled ? (
+                                                                        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+                                                                            <div className="flex-1">
+                                                                                <p className="text-sm font-semibold text-slate-800">Deseja salvar um Resumo?</p>
+                                                                                <p className="text-xs text-slate-500 mt-1">Transforme esse tópico em um Card rápido na sua Biblioteca.</p>
+                                                                            </div>
+                                                                            <div className="flex gap-2 w-full sm:w-auto">
+                                                                                <button
+                                                                                    onClick={() => setApprovedCards(prev => [...prev, msg.id])} // Ignora visualmente
+                                                                                    className="px-4 py-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg text-sm font-medium transition-colors text-slate-600 flex-1 sm:flex-none shadow-sm"
+                                                                                >
+                                                                                    Ignorar
+                                                                                </button>
+                                                                                <button
+                                                                                    onClick={() => handleApproveCard(msg.id, card)}
+                                                                                    className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center justify-center gap-2 flex-1 sm:flex-none"
+                                                                                >
+                                                                                    <span className="material-symbols-outlined text-[18px]">add_circle</span>
+                                                                                    Aprovar Card
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl p-3 flex items-center gap-2 mt-4 text-sm font-medium">
+                                                                            <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                                                                            Decisão registrada na Biblioteca!
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                             );
                                                         }
