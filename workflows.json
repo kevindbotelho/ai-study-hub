@@ -1,11 +1,11 @@
 {
   "data": [
     {
-      "updatedAt": "2026-03-05T00:21:05.273Z",
+      "updatedAt": "2026-03-05T00:36:49.760Z",
       "createdAt": "2026-03-04T23:05:23.906Z",
       "id": "QJ9GymM60U1K8lhi",
       "name": "AI Study Hub - Gemini Agent",
-      "active": false,
+      "active": true,
       "isArchived": false,
       "nodes": [
         {
@@ -29,7 +29,7 @@
           "parameters": {
             "text": "={{ $json.body.text }}",
             "options": {
-              "systemMessage": "Você é o assistente virtual do AI Study Hub. Responda o usuário de forma clara, educada e direta em português brasileiro.\n\nSE o usuário pedir para criar ou gerar um \"resumo\", \"resumir\", \"card\" ou \"flashcard\", você DEVE responder EXCLUSIVAMENTE com um JSON estruturado (minificado) seguindo exatamente o formato abaixo, sem nenhum texto a mais, nem com markdowns de bloco (```json). O retorno precisa começar do { e terminar no }:\n{\n  \"type\": \"summary\",\n  \"title\": \"Título Curto sobre o Assunto\",\n  \"description\": \"Seu resumo incrível e super detalhado com os principais pontos do assunto fornecido...\",\n  \"category\": \"Matéria (ex: Biologia, Programação, História)\"\n}\n\nSe não for pedido um resumo ou card focado nisso, apenas converse e responda normalmente em texto."
+              "systemMessage": "Você é o assistente virtual do AI Study Hub. Responda o usuário de forma clara, educada e direta em português brasileiro.\n\nSE o usuário pedir para criar ou gerar um \"resumo\", \"resumir\", \"card\" ou \"flashcard\", você DEVE responder EXCLUSIVAMENTE com um JSON estruturado (minificado) seguindo exatamente o formato abaixo, sem nenhum texto a mais, nem com markdowns de bloco (```json). O retorno precisa começar da chave de abertura de objeto e terminar na chave de fechamento:\n{{\n  \"type\": \"summary\",\n  \"title\": \"Título Curto sobre o Assunto\",\n  \"description\": \"Seu resumo incrível e super detalhado com os principais pontos do assunto fornecido...\",\n  \"category\": \"Matéria (ex: Biologia, Programação, História)\"\n}}\n\nSe não for pedido um resumo ou card focado nisso, apenas converse e responda normalmente em texto."
             }
           },
           "name": "AI Agent",
@@ -73,7 +73,25 @@
           "id": "94bb4bef-c6f8-4bea-9d00-1f60bc56cdb8"
         },
         {
-          "parameters": {},
+          "parameters": {
+            "tableId": "chat_messages",
+            "fieldsUi": {
+              "fieldValues": [
+                {
+                  "fieldId": "session_id",
+                  "fieldValue": "={{ $('Webhook').item.json.body.session_id }}"
+                },
+                {
+                  "fieldId": "role",
+                  "fieldValue": "ai"
+                },
+                {
+                  "fieldId": "text",
+                  "fieldValue": "={{ $json.output }}"
+                }
+              ]
+            }
+          },
           "name": "Supabase Insert",
           "type": "n8n-nodes-base.supabase",
           "typeVersion": 1,
@@ -171,8 +189,8 @@
         "templateCredsSetupCompleted": true
       },
       "pinData": {},
-      "versionId": "a6324fd8-f329-46e3-84f9-f767c9cc13b4",
-      "activeVersionId": null,
+      "versionId": "059e447e-e5fd-4d85-a8e4-6833a400a91b",
+      "activeVersionId": "059e447e-e5fd-4d85-a8e4-6833a400a91b",
       "triggerCount": 1,
       "shared": [
         {
@@ -183,7 +201,189 @@
           "projectId": "xNYKtUwfvdY3hoE1"
         }
       ],
-      "activeVersion": null,
+      "activeVersion": {
+        "updatedAt": "2026-03-05T00:36:49.761Z",
+        "createdAt": "2026-03-05T00:36:49.761Z",
+        "versionId": "059e447e-e5fd-4d85-a8e4-6833a400a91b",
+        "workflowId": "QJ9GymM60U1K8lhi",
+        "nodes": [
+          {
+            "parameters": {
+              "httpMethod": "POST",
+              "path": "ai-study-hub-chat",
+              "responseMode": "responseNode",
+              "options": {}
+            },
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+              0,
+              0
+            ],
+            "webhookId": "ai-study-hub-chat",
+            "id": "f28e420c-9a21-4aad-9508-1a6a8b248a79"
+          },
+          {
+            "parameters": {
+              "text": "={{ $json.body.text }}",
+              "options": {
+                "systemMessage": "Você é o assistente virtual do AI Study Hub. Responda o usuário de forma clara, educada e direta em português brasileiro.\n\nSE o usuário pedir para criar ou gerar um \"resumo\", \"resumir\", \"card\" ou \"flashcard\", você DEVE responder EXCLUSIVAMENTE com um JSON estruturado (minificado) seguindo exatamente o formato abaixo, sem nenhum texto a mais, nem com markdowns de bloco (```json). O retorno precisa começar da chave de abertura de objeto e terminar na chave de fechamento:\n{{\n  \"type\": \"summary\",\n  \"title\": \"Título Curto sobre o Assunto\",\n  \"description\": \"Seu resumo incrível e super detalhado com os principais pontos do assunto fornecido...\",\n  \"category\": \"Matéria (ex: Biologia, Programação, História)\"\n}}\n\nSe não for pedido um resumo ou card focado nisso, apenas converse e responda normalmente em texto."
+              }
+            },
+            "name": "AI Agent",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 1,
+            "position": [
+              256,
+              0
+            ],
+            "id": "c0770120-a219-4d1d-a9f2-61d84744294f"
+          },
+          {
+            "parameters": {
+              "modelName": "models/gemini-3.1-pro-preview",
+              "options": {}
+            },
+            "name": "Google Gemini Chat Model",
+            "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+            "typeVersion": 1,
+            "position": [
+              208,
+              208
+            ],
+            "id": "e1932f34-06b1-4110-8e49-4642add8bec1",
+            "credentials": {
+              "googlePalmApi": {
+                "id": "0PHoyk90TNWKIt2N",
+                "name": "Google Gemini(PaLM) Api account"
+              }
+            }
+          },
+          {
+            "parameters": {},
+            "name": "Window Buffer Memory",
+            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+            "typeVersion": 1,
+            "position": [
+              352,
+              208
+            ],
+            "id": "94bb4bef-c6f8-4bea-9d00-1f60bc56cdb8"
+          },
+          {
+            "parameters": {
+              "tableId": "chat_messages",
+              "fieldsUi": {
+                "fieldValues": [
+                  {
+                    "fieldId": "session_id",
+                    "fieldValue": "={{ $('Webhook').item.json.body.session_id }}"
+                  },
+                  {
+                    "fieldId": "role",
+                    "fieldValue": "ai"
+                  },
+                  {
+                    "fieldId": "text",
+                    "fieldValue": "={{ $json.output }}"
+                  }
+                ]
+              }
+            },
+            "name": "Supabase Insert",
+            "type": "n8n-nodes-base.supabase",
+            "typeVersion": 1,
+            "position": [
+              560,
+              0
+            ],
+            "id": "43cbb962-58e2-426f-8cc0-79a0aa042cd4",
+            "credentials": {
+              "supabaseApi": {
+                "id": "DeO6PTzQovwCawxj",
+                "name": "Supabase account"
+              }
+            }
+          },
+          {
+            "parameters": {
+              "respondWith": "json",
+              "responseBody": "={\n  \"response\": \"{{ $json.output }}\"\n}",
+              "options": {}
+            },
+            "name": "Respond to Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+              752,
+              0
+            ],
+            "id": "c43e37cb-7872-4dfd-a793-aa4c17fefdd5"
+          }
+        ],
+        "connections": {
+          "Webhook": {
+            "main": [
+              [
+                {
+                  "node": "AI Agent",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Google Gemini Chat Model": {
+            "ai_languageModel": [
+              [
+                {
+                  "node": "AI Agent",
+                  "type": "ai_languageModel",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Window Buffer Memory": {
+            "ai_memory": [
+              [
+                {
+                  "node": "AI Agent",
+                  "type": "ai_memory",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "AI Agent": {
+            "main": [
+              [
+                {
+                  "node": "Supabase Insert",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          },
+          "Supabase Insert": {
+            "main": [
+              [
+                {
+                  "node": "Respond to Webhook",
+                  "type": "main",
+                  "index": 0
+                }
+              ]
+            ]
+          }
+        },
+        "authors": "Kevin Botelho",
+        "name": null,
+        "description": null,
+        "autosaved": false
+      },
       "tags": []
     }
   ],
