@@ -57,20 +57,29 @@ export function AIWorkspace() {
         return null;
     };
 
-    const handleApproveCard = async (msgId: string, card: any) => {
+    const handleApproveCard = async (card: any, messageId: string) => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        await supabase.from('summaries').insert([{
-            title: card.title,
-            description: card.summary,
-            category: 'IA',
-            source_type: 'ai',
-            read_time: '1 min',
-            user_id: user.id
-        }]);
+        try {
+            // Salva na tabela summaries. Combina o conteúdo completo com o resumo se houver content, 
+            // ou concatena no background se a tabela assim o exigir (muitas vezes usamos content e description).
+            await supabase.from('summaries').insert([{
+                title: card.title,
+                description: card.summary,
+                content: card.full_answer,
+                category: 'IA',
+                source_type: 'ai',
+                source_url: null,
+                tags: JSON.stringify(['ai', 'estudos']),
+                read_time: '2 min',
+                user_id: user?.id
+            }]);
 
-        setApprovedCards(prev => [...prev, msgId]);
+            setApprovedCards(prev => [...prev, messageId]);
+        } catch (error) {
+            console.error("Error saving card to summaries:", error);
+        }
     };
 
 
@@ -305,11 +314,31 @@ export function AIWorkspace() {
                                                         if (card) {
                                                             const isHandled = approvedCards.includes(msg.id);
                                                             return (
-                                                                <div className="space-y-4 w-full">
-                                                                    <div className="text-sm leading-relaxed text-slate-700 markdown-body">
-                                                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                                            {card.full_answer}
-                                                                        </ReactMarkdown>
+                                                                <div className="space-y-6 w-full">
+
+                                                                    {/* Resposta Completa */}
+                                                                    <div className="bg-slate-50 border border-slate-100/80 rounded-2xl p-5 md:p-6 shadow-sm">
+                                                                        <h4 className="text-[13px] font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                                                            <span className="material-symbols-outlined text-[18px]">menu_book</span>
+                                                                            Explicação Detalhada
+                                                                        </h4>
+                                                                        <div className="text-sm leading-relaxed text-slate-700 markdown-body">
+                                                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                                                {card.full_answer}
+                                                                            </ReactMarkdown>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* Resumo Card */}
+                                                                    <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 md:p-6 shadow-sm relative overflow-hidden">
+                                                                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                                                                        <h4 className="text-[13px] font-bold text-primary uppercase tracking-wider mb-3 flex items-center gap-2 relative z-10">
+                                                                            <span className="material-symbols-outlined text-[18px]">bolt</span>
+                                                                            Resumo Rápido (Card)
+                                                                        </h4>
+                                                                        <div className="text-[15px] text-slate-800 leading-relaxed font-medium relative z-10">
+                                                                            {card.summary}
+                                                                        </div>
                                                                     </div>
 
                                                                     {!isHandled ? (
@@ -326,7 +355,7 @@ export function AIWorkspace() {
                                                                                     Ignorar
                                                                                 </button>
                                                                                 <button
-                                                                                    onClick={() => handleApproveCard(msg.id, card)}
+                                                                                    onClick={() => handleApproveCard(card, msg.id)}
                                                                                     className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center justify-center gap-2 flex-1 sm:flex-none"
                                                                                 >
                                                                                     <span className="material-symbols-outlined text-[18px]">add_circle</span>
