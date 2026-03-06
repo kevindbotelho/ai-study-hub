@@ -61,24 +61,25 @@ export function AIWorkspace() {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        try {
-            // Salva na tabela summaries. Combina o conteúdo completo com o resumo se houver content, 
-            // ou concatena no background se a tabela assim o exigir (muitas vezes usamos content e description).
-            await supabase.from('summaries').insert([{
-                title: card.title,
-                description: card.summary,
-                content: card.full_answer,
-                category: 'IA',
-                source_type: 'ai',
-                source_url: null,
-                tags: JSON.stringify(['ai', 'estudos']),
-                read_time: '2 min',
-                user_id: user?.id
-            }]);
+        console.log("Saving card...", card);
+        const { error } = await supabase.from('summaries').insert([{
+            title: card.title,
+            description: card.summary,
+            content: card.full_answer,
+            category: 'IA',
+            source_type: 'ai',
+            source_url: null,
+            tags: JSON.stringify(['ai', 'estudos']),
+            read_time: '2 min',
+            user_id: user.id
+        }]);
 
+        if (error) {
+            console.error("Supabase Save Error:", error);
+            alert("Erro ao salvar card: " + error.message);
+        } else {
+            console.log("Card saved successfully!");
             setApprovedCards(prev => [...prev, messageId]);
-        } catch (error) {
-            console.error("Error saving card to summaries:", error);
         }
     };
 
