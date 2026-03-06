@@ -17,28 +17,38 @@ export function AIWorkspace() {
 
     const parseMessageAsCard = (text: string) => {
         try {
-            // Limpa markdown wraps se existirem
-            let cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            // Nova Estrutura: A IA manda o texto gigante em Markdown livre e insere 
+            // no finalzinho um bloco ```json { "summary": "...", "title": "..." } ```
+            const jsonBlockRegex = /```json\n([\s\S]*?)\n```/;
+            const match = text.match(jsonBlockRegex);
 
-            // Tenta parse direto
-            try {
-                const parsed = JSON.parse(cleanText);
-                if (parsed.full_answer && parsed.summary && parsed.title) {
-                    return parsed;
-                }
-            } catch (jsonError) {
-                // Se falhar (ex: LLM gerou quebras de linha não escapadas dentro das aspas)
-                // Usamos Regex para extrair as chaves do pseudo-JSON
-                const fullAnswerMatch = cleanText.match(/"full_answer"\s*:\s*"(.*?)"(?=\s*,\s*"summary"\s*:)/s);
-                const summaryMatch = cleanText.match(/"summary"\s*:\s*"(.*?)"(?=\s*,\s*"title"\s*:)/s);
-                const titleMatch = cleanText.match(/"title"\s*:\s*"(.*?)"(?=\s*\})/s);
+            if (match && match[1]) {
+                try {
+                    const parsedJson = JSON.parse(match[1]);
 
-                if (fullAnswerMatch && summaryMatch && titleMatch) {
-                    return {
-                        full_answer: fullAnswerMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"'),
-                        summary: summaryMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"'),
-                        title: titleMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"')
-                    };
+                    if (parsedJson.summary && parsedJson.title) {
+                        // O full_answer será TODO O TEXTO original (Markdown),
+                        // exceto a própria caixa de código JSON do final.
+                        const cleanFullAnswer = text.replace(jsonBlockRegex, '').trim();
+
+                        return {
+                            full_answer: cleanFullAnswer,
+                            summary: parsedJson.summary,
+                            title: parsedJson.title,
+                        };
+                    }
+                } catch (err) {
+                    // Fallback se o LLM enviar aspas quebradas dentro do bloco JSON
+                    const summaryMatch = match[1].match(/"summary"\s*:\s*"(.*?)"(?=\s*,\s*"title"\s*:)/s);
+                    const titleMatch = match[1].match(/"title"\s*:\s*"(.*?)"(?=\s*\})/s);
+
+                    if (summaryMatch && titleMatch) {
+                        return {
+                            full_answer: text.replace(jsonBlockRegex, '').trim(),
+                            summary: summaryMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"'),
+                            title: titleMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"')
+                        };
+                    }
                 }
             }
         } catch (e) {

@@ -9,16 +9,22 @@ async function updateWorkflow() {
         const aiNode = w.nodes.find(n => n.name === 'AI Agent');
 
         aiNode.parameters.options.systemMessage = `Você é o Academy AI, um assistente educacional do Study Hub.
-Ao responder as dúvidas do usuário sobre um tema (ex: "O que é MCP?"), você DEVE gerar uma explicação aprofundada estruturada e um resumo curto.
-Sua resposta final deve ser EXCLUSIVAMENTE um objeto JSON válido, sem marcações markdown de bloco de código no início ou fim (\`\`\`json), com a seguinte estrutura estrita:
+Ao responder as dúvidas do usuário sobre um tema (ex: "O que é MCP?"), você DEVE gerar uma explicação aprofundada e longa, estruturada em tópicos Markdown (ex: 'O que é', 'Para que serve', 'Como funciona', 'Aplicações'). Escreva uma resposta completíssima.
 
+REGRA OBRIGATÓRIA:
+No final absoluto da sua resposta (depois de toda a sua explicação longa), você deve anexar um bloco de código JSON contendo um resumo curto e um título.
+
+Use EXATAMENTE este formato para a sua resposta:
+
+<Sua explicação longa e aprofundada em Markdown puro, com quantos parágrafos e tópicos quiser>
+
+---
+\`\`\`json
 {{
-  "full_answer": "Sua resposta longa e estruturada em Markdown. Inclua subtópicos como 'O que é', 'Para que serve', 'Como funciona', 'Aplicações' e 'Vantagens' dependendo do que fizer sentido.",
-  "summary": "Um parágrafo curto de 2 a 3 linhas resumindo a explicação acima de forma objetiva, ideal para um card de estudos (Flashcard/Resumo).",
-  "title": "Um título curto e claro para o tema (ex: 'Model Context Protocol (MCP)')."
+  "summary": "Um parágrafo curto de 2 a 3 linhas resumindo a explicação principal de forma objetiva, ideal para um card de flashcard.",
+  "title": "Um título curto e claro para o tema abordado"
 }}
-
-Sua saída deve ser APENAS o JSON validamente formatado (chaves e valores), sem strings extras. Use quebras de linha (\\n\\n) apenas dentro das strings JSON se precisar formatar o markdown.`;
+\`\`\``;
 
         const putRes = await fetch(`${N8N_URL}/workflows/${WORKFLOW_ID}`, {
             method: 'PUT',
