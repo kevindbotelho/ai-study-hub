@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabase';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export function AIWorkspace() {
     const [sessionId, setSessionId] = useState<string | null>(null);
@@ -15,9 +17,29 @@ export function AIWorkspace() {
 
     const parseMessageAsCard = (text: string) => {
         try {
-            const parsed = JSON.parse(text);
-            if (parsed.full_answer && parsed.summary && parsed.title) {
-                return parsed;
+            // Limpa markdown wraps se existirem
+            let cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+            // Tenta parse direto
+            try {
+                const parsed = JSON.parse(cleanText);
+                if (parsed.full_answer && parsed.summary && parsed.title) {
+                    return parsed;
+                }
+            } catch (jsonError) {
+                // Se falhar (ex: LLM gerou quebras de linha não escapadas dentro das aspas)
+                // Usamos Regex para extrair as chaves do pseudo-JSON
+                const fullAnswerMatch = cleanText.match(/"full_answer"\s*:\s*"(.*?)"(?=\s*,\s*"summary"\s*:)/s);
+                const summaryMatch = cleanText.match(/"summary"\s*:\s*"(.*?)"(?=\s*,\s*"title"\s*:)/s);
+                const titleMatch = cleanText.match(/"title"\s*:\s*"(.*?)"(?=\s*\})/s);
+
+                if (fullAnswerMatch && summaryMatch && titleMatch) {
+                    return {
+                        full_answer: fullAnswerMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"'),
+                        summary: summaryMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"'),
+                        title: titleMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"')
+                    };
+                }
             }
         } catch (e) {
             return null;
@@ -274,8 +296,10 @@ export function AIWorkspace() {
                                                             const isHandled = approvedCards.includes(msg.id);
                                                             return (
                                                                 <div className="space-y-4 w-full">
-                                                                    <div className="text-sm leading-relaxed whitespace-pre-wrap text-slate-700 markdown-body">
-                                                                        {card.full_answer}
+                                                                    <div className="text-sm leading-relaxed text-slate-700 markdown-body">
+                                                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                                            {card.full_answer}
+                                                                        </ReactMarkdown>
                                                                     </div>
 
                                                                     {!isHandled ? (
@@ -309,7 +333,13 @@ export function AIWorkspace() {
                                                                 </div>
                                                             );
                                                         }
-                                                        return <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>;
+                                                        return (
+                                                            <div className="text-sm leading-relaxed text-slate-700 markdown-body">
+                                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                                    {msg.text}
+                                                                </ReactMarkdown>
+                                                            </div>
+                                                        );
                                                     })()}
                                                 </div>
                                             </div>
