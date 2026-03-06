@@ -68,7 +68,6 @@ export function AIWorkspace() {
             content: card.full_answer,
             category: 'IA',
             source_type: 'ai',
-            source_url: null,
             tags: JSON.stringify(['ai', 'estudos']),
             read_time: '2 min',
             user_id: user.id
