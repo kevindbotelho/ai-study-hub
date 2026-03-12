@@ -66,6 +66,10 @@ export function AIWorkspace() {
             title: card.title,
             description: card.summary,
             content: card.full_answer,
+            summary_text: card.full_answer,
+            key_highlights: [
+                { title: "Resumo Rápido", description: card.summary }
+            ],
             category: 'IA',
             source_type: 'ai',
             tags: ['ai', 'estudos'],

@@ -88,7 +88,7 @@ export function Library() {
                     keyHighlights={selectedSummary.key_highlights || [
                         { title: "Aguardando nova estrutura", description: "Os pontos principais em formato de tópicos serão habilitados assim que a estrutura do N8n for atualizada." }
                     ]}
-                    detailedSummary={selectedSummary.description || selectedSummary.summary_text || selectedSummary.full_answer || "Resumo detalhado não disponível."}
+                    detailedSummary={selectedSummary.summary_text || selectedSummary.content || selectedSummary.description || "Resumo detalhado não disponível."}
                     onExportPdf={() => console.log('Export PDF')}
                     onShare={() => console.log('Share')}
                     onPlayVideo={() => selectedSummary.source_url && window.open(selectedSummary.source_url, '_blank')}
