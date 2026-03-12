@@ -2,6 +2,7 @@ import React from 'react';
 import { Share2, Clock, BarChart3, List, Lightbulb, FileText, Play } from 'lucide-react';
 
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 // --- Custom UI Components to replace Shadcn ---
 const Card = ({ className = '', children }: { className?: string, children: React.ReactNode }) => (
@@ -253,7 +254,7 @@ export function StudyBlockDetails({
             </div>
             <CardContent className="p-6 md:p-8">
               <div className="prose prose-slate  prose-p:leading-relaxed prose-p:text-slate-700 :text-slate-300 max-w-none prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
-                <ReactMarkdown>{detailedSummary}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{detailedSummary}</ReactMarkdown>
               </div>
             </CardContent>
           </Card>
