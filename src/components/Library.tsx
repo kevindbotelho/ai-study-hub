@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { StudyBlockDetails } from './ai/StudyBlockDetails';
+import { ArrowLeft } from 'lucide-react';
 
 const categories = ["Todos", "Resumos do YouTube", "Discussões no Reddit", "Textos em PDF", "Notas Pessoais"];
 
-// Helper to map the source_type correctly to styles and text (similar to Dashboard, but adapted for Library cards)
+// Helper to map the source_type correctly to styles and text
 const getIconAndColors = (type: string) => {
-    switch (type.toLowerCase()) {
+    switch (type?.toLowerCase()) {
         case 'youtube':
             return { icon: 'play_circle', bg: 'bg-red-50', text: 'text-red-500' };
         case 'article':
@@ -24,6 +26,7 @@ export function Library() {
     const [activeCategory, setActiveCategory] = useState("Todos");
     const [libraryData, setLibraryData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedSummary, setSelectedSummary] = useState<any | null>(null);
 
     useEffect(() => {
         const fetchLibraryData = async () => {
@@ -59,6 +62,40 @@ export function Library() {
         if (diff < 24) return `Há ${diff}h`;
         return `Há ${Math.floor(diff / 24)}d`;
     };
+
+    if (selectedSummary) {
+        // Render the detailed view
+        return (
+            <div className="flex flex-col w-full min-h-full pb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="mb-6 flex justify-start items-center">
+                    <button 
+                        onClick={() => setSelectedSummary(null)}
+                        className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors font-semibold group"
+                    >
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        Voltar para Biblioteca
+                    </button>
+                </div>
+                <StudyBlockDetails
+                    title={selectedSummary.title}
+                    videoUrl={selectedSummary.source_type === 'youtube' ? selectedSummary.source_url : null}
+                    coverImageUrl={selectedSummary.source_type !== 'youtube' ? 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop' : null}
+                    channelName="Fonte Original"
+                    duration={selectedSummary.read_time || "N/A"}
+                    difficulty="Intermediário" // Mock data as requested since it's not in DB yet
+                    readTime={selectedSummary.read_time || "~5 mins"}
+                    topicCount="Principais Tópicos"
+                    keyHighlights={[
+                        { title: "Resumo", description: selectedSummary.description || "Descrição curta indisponível." }
+                    ]}
+                    detailedSummary={selectedSummary.summary_text || selectedSummary.full_answer || "Resumo detalhado não disponível."}
+                    onExportPdf={() => console.log('Export PDF')}
+                    onShare={() => console.log('Share')}
+                    onPlayVideo={() => selectedSummary.source_url && window.open(selectedSummary.source_url, '_blank')}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col w-full min-h-full pb-16">
@@ -108,7 +145,11 @@ export function Library() {
                         }
 
                         return (
-                            <div key={item.id} className="bg-white rounded-2xl p-5 shadow-sm border border-primary/5 flex flex-col gap-4 hover:shadow-md transition-shadow cursor-pointer group">
+                            <div 
+                                key={item.id} 
+                                onClick={() => setSelectedSummary(item)}
+                                className="bg-white rounded-2xl p-5 shadow-sm border border-primary/5 flex flex-col gap-4 hover:shadow-md transition-shadow cursor-pointer group"
+                            >
                                 <div className="flex justify-between items-start">
                                     <div className={`size-10 rounded-xl ${bg} flex items-center justify-center ${text}`}>
                                         <span className="material-symbols-outlined">{icon}</span>
@@ -136,7 +177,7 @@ export function Library() {
                                         ))
                                     ) : (
                                         <span className="px-2.5 py-0.5 bg-slate-50 text-slate-400 border border-slate-100 text-[10px] font-bold rounded-full uppercase tracking-wider">
-                                            #{item.category}
+                                            #{item.category || item.source_type}
                                         </span>
                                     )}
                                 </div>
