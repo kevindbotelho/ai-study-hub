@@ -64,6 +64,18 @@ export function Library() {
     };
 
     if (selectedSummary) {
+        let displayHighlights = selectedSummary.key_highlights;
+        if (typeof displayHighlights === 'string') {
+            try { displayHighlights = JSON.parse(displayHighlights); } catch(e) {}
+        }
+        if (!Array.isArray(displayHighlights) || displayHighlights.length === 0) {
+            displayHighlights = [
+                { title: "Resumo Simples", description: selectedSummary.description || "Crie um novo resumo usando a nova estrutura de destaques no chat." }
+            ];
+        }
+
+        const detailedSummaryText = selectedSummary.summary_text || selectedSummary.content || selectedSummary.description || "Resumo detalhado não disponível.";
+
         // Render the detailed view
         return (
             <div className="flex flex-col w-full min-h-full pb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -85,10 +97,8 @@ export function Library() {
                     difficulty="Intermediário" // Mock data as requested since it's not in DB yet
                     readTime={selectedSummary.read_time || "~5 mins"}
                     topicCount="Principais Tópicos"
-                    keyHighlights={selectedSummary.key_highlights || [
-                        { title: "Aguardando nova estrutura", description: "Os pontos principais em formato de tópicos serão habilitados assim que a estrutura do N8n for atualizada." }
-                    ]}
-                    detailedSummary={selectedSummary.summary_text || selectedSummary.content || selectedSummary.description || "Resumo detalhado não disponível."}
+                    keyHighlights={displayHighlights}
+                    detailedSummary={detailedSummaryText}
                     onExportPdf={() => console.log('Export PDF')}
                     onShare={() => console.log('Share')}
                     onPlayVideo={() => selectedSummary.source_url && window.open(selectedSummary.source_url, '_blank')}

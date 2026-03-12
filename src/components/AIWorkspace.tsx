@@ -26,15 +26,17 @@ export function AIWorkspace() {
                 try {
                     const parsedJson = JSON.parse(match[1]);
 
-                    if (parsedJson.summary && parsedJson.title) {
+                    // Aceita se tiver title e (summary ou key_highlights)
+                    if (parsedJson.title && (parsedJson.summary || parsedJson.key_highlights)) {
                         // O full_answer será TODO O TEXTO original (Markdown),
                         // exceto a própria caixa de código JSON do final.
                         const cleanFullAnswer = text.replace(jsonBlockRegex, '').trim();
 
                         return {
                             full_answer: cleanFullAnswer,
-                            summary: parsedJson.summary,
+                            summary: parsedJson.summary || null,
                             title: parsedJson.title,
+                            key_highlights: parsedJson.key_highlights || null
                         };
                     }
                 } catch (err) {
@@ -64,10 +66,10 @@ export function AIWorkspace() {
         console.log("Saving card...", card);
         const { error } = await supabase.from('summaries').insert([{
             title: card.title,
-            description: card.summary,
+            description: card.summary || (card.key_highlights ? `${card.key_highlights.length} destaques principais salvos.` : "Sem descrição curta"),
             content: card.full_answer,
             summary_text: card.full_answer,
-            key_highlights: [
+            key_highlights: card.key_highlights || [
                 { title: "Resumo Rápido", description: card.summary }
             ],
             category: 'IA',
@@ -338,10 +340,20 @@ export function AIWorkspace() {
                                                                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
                                                                         <h4 className="text-[13px] font-bold text-primary uppercase tracking-wider mb-3 flex items-center gap-2 relative z-10">
                                                                             <span className="material-symbols-outlined text-[18px]">bolt</span>
-                                                                            Resumo Rápido (Card)
+                                                                            {card.key_highlights ? "Destaques Rápidos" : "Resumo Rápido (Card)"}
                                                                         </h4>
-                                                                        <div className="text-[15px] text-slate-800 leading-relaxed font-medium relative z-10">
-                                                                            {card.summary}
+                                                                        <div className="text-[15px] text-slate-800 leading-relaxed font-medium relative z-10 w-full">
+                                                                            {card.key_highlights ? (
+                                                                                <ul className="space-y-3">
+                                                                                    {card.key_highlights.map((h: any, i: number) => (
+                                                                                        <li key={i}>
+                                                                                            <b className="text-slate-900">{h.title}:</b> <span className="text-slate-600 font-normal">{h.description}</span>
+                                                                                        </li>
+                                                                                    ))}
+                                                                                </ul>
+                                                                            ) : (
+                                                                                card.summary
+                                                                            )}
                                                                         </div>
                                                                     </div>
 
