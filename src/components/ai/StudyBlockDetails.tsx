@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 
 // --- Custom UI Components to replace Shadcn ---
 const Card = ({ className = '', children }: { className?: string, children: React.ReactNode }) => (
-  <div className={`bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-slate-50 shadow-sm ${className}`}>
+  <div className={`bg-white  rounded-xl border border-slate-200  text-slate-950  shadow-sm ${className}`}>
     {children}
   </div>
 );
@@ -29,19 +29,19 @@ const CardContent = ({ className = '', children }: { className?: string, childre
 );
 
 const Badge = ({ className = '', variant = 'default', children }: { className?: string, variant?: 'default' | 'destructive', children: React.ReactNode }) => {
-  const base = "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2 dark:border-slate-800 dark:focus:ring-slate-300";
+  const base = "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-slate-950 focus:ring-offset-2  :ring-slate-300";
   const variants = {
-    default: "border-transparent bg-slate-900 text-slate-50 shadow hover:bg-slate-900/80 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/80",
-    destructive: "border-transparent bg-red-500 text-slate-50 shadow hover:bg-red-500/80 dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/80",
+    default: "border-transparent bg-slate-900 text-slate-50 shadow hover:bg-slate-900/80   :bg-slate-50/80",
+    destructive: "border-transparent bg-red-500 text-slate-50 shadow hover:bg-red-500/80   :bg-red-900/80",
   };
   return <div className={`${base} ${variants[variant]} ${className}`}>{children}</div>;
 };
 
 const Button = ({ className = '', variant = 'default', size = 'default', onClick, children }: { className?: string, variant?: 'default' | 'ghost', size?: 'default' | 'icon', onClick?: () => void, children: React.ReactNode }) => {
-  const base = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-slate-300";
+  const base = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 :ring-slate-300";
   const variants = {
-    default: "bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
-    ghost: "hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50",
+    default: "bg-slate-900 text-slate-50 shadow hover:bg-slate-900/90   :bg-slate-50/90",
+    ghost: "hover:bg-slate-100 hover:text-slate-900 :bg-slate-800 :text-slate-50",
   };
   const sizes = {
     default: "h-9 px-4 py-2",
@@ -95,10 +95,10 @@ export function StudyBlockDetails({
   const hasMedia = videoUrl || coverImageUrl;
 
   return (
-    <div className="flex flex-col w-full max-w-5xl mx-auto pb-10 font-sans text-slate-900 dark:text-slate-100">
+    <div className="flex flex-col w-full max-w-7xl mx-auto pb-10 font-sans text-slate-900 ">
       
       {/* Header Section */}
-      <header className="sticky top-0 z-10 flex items-center justify-between bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-4 md:px-6 rounded-b-xl mb-6 shadow-sm border-b border-slate-200 dark:border-slate-800">
+      <header className="flex items-center justify-between bg-white/80  backdrop-blur-md px-4 py-4 md:px-6 rounded-b-xl mb-6 shadow-sm border-b border-slate-200 ">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <FileText className="w-5 h-5" />
@@ -132,7 +132,7 @@ export function StudyBlockDetails({
           
           {/* Media Area (Video Thumbnail or Cover Image) */}
           {hasMedia && (
-            <div className="lg:col-span-2 relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-200 dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-800">
+            <div className="lg:col-span-2 relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-200  shadow-sm border border-slate-200 ">
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform hover:scale-105 duration-500" 
                 style={{ backgroundImage: `url('${coverImageUrl || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop'}')` }}
@@ -172,7 +172,7 @@ export function StudyBlockDetails({
           )}
 
           {/* Content Analysis Card */}
-          <Card className="rounded-2xl shadow-sm border-slate-200 dark:border-slate-800 lg:col-span-1 border">
+          <Card className="rounded-2xl shadow-sm border-slate-200  lg:col-span-1 border">
             <CardHeader className="pb-4">
               <CardTitle className="text-sm font-bold uppercase tracking-wider text-primary flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" />
@@ -182,32 +182,32 @@ export function StudyBlockDetails({
             <CardContent>
               <div className="flex flex-col gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100  text-amber-600 ">
                     <BarChart3 className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Difficulty</p>
-                    <p className="font-bold text-slate-900 dark:text-white text-base">{difficulty}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 ">Difficulty</p>
+                    <p className="font-bold text-slate-900  text-base">{difficulty}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-500">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100  text-blue-600 ">
                     <Clock className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Read Time</p>
-                    <p className="font-bold text-slate-900 dark:text-white text-base">{readTime}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 ">Read Time</p>
+                    <p className="font-bold text-slate-900  text-base">{readTime}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-500">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100  text-emerald-600 ">
                     <List className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Topics</p>
-                    <p className="font-bold text-slate-900 dark:text-white text-base">{topicCount}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 ">Topics</p>
+                    <p className="font-bold text-slate-900  text-base">{topicCount}</p>
                   </div>
                 </div>
               </div>
@@ -217,9 +217,9 @@ export function StudyBlockDetails({
 
         {/* Middle Section: Key Highlights */}
         {keyHighlights && keyHighlights.length > 0 && (
-          <Card className="rounded-2xl shadow-sm border-slate-200 dark:border-slate-800 border">
+          <Card className="rounded-2xl shadow-sm border-slate-200  border">
             <CardHeader>
-              <CardTitle className="text-lg md:text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+              <CardTitle className="text-lg md:text-xl font-bold flex items-center gap-2 text-slate-900 ">
                 <Lightbulb className="w-6 h-6 text-primary" />
                 Key Highlights
               </CardTitle>
@@ -232,8 +232,8 @@ export function StudyBlockDetails({
                       {index + 1}
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white mb-2 leading-tight">{highlight.title}</h4>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <h4 className="font-bold text-slate-900  mb-2 leading-tight">{highlight.title}</h4>
+                      <p className="text-sm text-slate-600  leading-relaxed">
                         {highlight.description}
                       </p>
                     </div>
@@ -246,13 +246,13 @@ export function StudyBlockDetails({
 
         {/* Bottom Section: Detailed Summary */}
         {detailedSummary && (
-          <Card className="rounded-2xl shadow-sm border-slate-200 dark:border-slate-800 border overflow-hidden">
-            <div className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 p-4 px-6 flex items-center gap-2">
+          <Card className="rounded-2xl shadow-sm border-slate-200  border overflow-hidden">
+            <div className="bg-slate-50  border-b border-slate-100  p-4 px-6 flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary" />
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white">Detailed Summary</h3>
+              <h3 className="font-bold text-lg text-slate-900 ">Detailed Summary</h3>
             </div>
             <CardContent className="p-6 md:p-8">
-              <div className="prose prose-slate dark:prose-invert prose-p:leading-relaxed prose-p:text-slate-700 dark:prose-p:text-slate-300 max-w-none prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
+              <div className="prose prose-slate  prose-p:leading-relaxed prose-p:text-slate-700 :text-slate-300 max-w-none prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
                 <ReactMarkdown>{detailedSummary}</ReactMarkdown>
               </div>
             </CardContent>

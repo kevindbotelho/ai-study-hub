@@ -85,10 +85,10 @@ export function Library() {
                     difficulty="Intermediário" // Mock data as requested since it's not in DB yet
                     readTime={selectedSummary.read_time || "~5 mins"}
                     topicCount="Principais Tópicos"
-                    keyHighlights={[
-                        { title: "Resumo", description: selectedSummary.description || "Descrição curta indisponível." }
+                    keyHighlights={selectedSummary.key_highlights || [
+                        { title: "Aguardando nova estrutura", description: "Os pontos principais em formato de tópicos serão habilitados assim que a estrutura do N8n for atualizada." }
                     ]}
-                    detailedSummary={selectedSummary.summary_text || selectedSummary.full_answer || "Resumo detalhado não disponível."}
+                    detailedSummary={selectedSummary.description || selectedSummary.summary_text || selectedSummary.full_answer || "Resumo detalhado não disponível."}
                     onExportPdf={() => console.log('Export PDF')}
                     onShare={() => console.log('Share')}
                     onPlayVideo={() => selectedSummary.source_url && window.open(selectedSummary.source_url, '_blank')}
