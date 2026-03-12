@@ -132,7 +132,7 @@ export function StudyBlockDetails({
           
           {/* Media Area (Video Thumbnail or Cover Image) */}
           {hasMedia && (
-            <div className="lg:col-span-2 relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-200  shadow-sm border border-slate-200 ">
+            <div className="lg:col-span-2 relative min-h-[250px] lg:h-full w-full overflow-hidden rounded-2xl bg-slate-200  shadow-sm border border-slate-200 ">
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform hover:scale-105 duration-500" 
                 style={{ backgroundImage: `url('${coverImageUrl || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop'}')` }}
