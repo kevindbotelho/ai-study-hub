@@ -3,7 +3,10 @@ import { supabase } from '../lib/supabase';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+type SourceMode = 'geral' | 'youtube' | 'twitter' | 'reddit';
+
 export function AIWorkspace() {
+    const [sourceMode, setSourceMode] = useState<SourceMode>('geral');
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState('');
@@ -209,13 +212,7 @@ export function AIWorkspace() {
                     <span className="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
                     <h1 className="text-xl font-bold tracking-tight">Estúdio IA</h1>
                 </div>
-                <button
-                    onClick={() => setSessionId(null)}
-                    className="bg-primary text-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm hover:opacity-90 transition-opacity flex items-center gap-2"
-                >
-                    <span className="material-symbols-outlined text-sm">add</span>
-                    Novo Chat
-                </button>
+                {/* O botão "Novo Chat" foi removido por redundância. O usuário já cria novo chat ao navegar. */}
             </header>
 
             <main className="flex flex-1 overflow-hidden">
@@ -269,38 +266,68 @@ export function AIWorkspace() {
                     <div className="flex-1 overflow-y-auto p-6 space-y-8 flex flex-col">
 
                         {messages.length === 0 && (
-                            <div className="flex flex-col items-center justify-center text-center pt-[10vh] pb-8 space-y-6">
-                                <div className="size-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                                    <span className="material-symbols-outlined text-4xl">smart_toy</span>
-                                </div>
-                                <div className="max-w-md">
-                                    <h2 className="text-2xl font-bold mb-2">Boa tarde, como posso ajudar?</h2>
-                                    <p className="text-slate-500 text-sm">Pronto para pesquisar, analisar ou criar materiais baseados em seus textos.</p>
+                            <div className="flex flex-col items-center justify-center text-center pt-[5vh] pb-8 space-y-8 w-full max-w-5xl mx-auto">
+                                <div className="max-w-xl">
+                                    <h2 className="text-3xl font-bold mb-3 text-slate-800 tracking-tight">O que vamos explorar hoje?</h2>
+                                    <p className="text-slate-500 text-base">Escolha a fonte do conteúdo para gerar um resumo otimizado ou faça uma pergunta livre.</p>
                                 </div>
 
-                                {/* Quick Action Pills */}
-                                <div className="flex flex-wrap justify-center gap-3 max-w-lg mt-4">
-                                    <button
-                                        onClick={() => handleSend("Resumir um Vídeo")}
-                                        className="px-4 py-2 bg-white hover:bg-slate-50 border border-primary/20 rounded-full text-slate-700 text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
-                                    >
-                                        <span className="material-symbols-outlined text-lg text-primary">video_library</span>
-                                        Resumir um Vídeo
-                                    </button>
-                                    <button
-                                        onClick={() => handleSend("Criar Flashcards")}
-                                        className="px-4 py-2 bg-white hover:bg-slate-50 border border-primary/20 rounded-full text-slate-700 text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
-                                    >
-                                        <span className="material-symbols-outlined text-lg text-primary">style</span>
-                                        Criar Flashcards
-                                    </button>
-                                    <button
-                                        onClick={() => handleSend("Explicar um Conceito")}
-                                        className="px-4 py-2 bg-white hover:bg-slate-50 border border-primary/20 rounded-full text-slate-700 text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
-                                    >
-                                        <span className="material-symbols-outlined text-lg text-primary">lightbulb</span>
-                                        Explicar um Conceito
-                                    </button>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-4">
+                                   {/* YouTube Card */}
+                                   <button 
+                                      onClick={() => setSourceMode('youtube')}
+                                      className={`p-6 rounded-2xl border transition-all text-left flex flex-col gap-4 relative overflow-hidden group hover:-translate-y-1 ${sourceMode === 'youtube' ? 'border-red-500 bg-red-50 shadow-md ring-1 ring-red-500/20' : 'border-slate-200 bg-white hover:border-red-200 hover:bg-slate-50 hover:shadow-sm'}`}
+                                   >
+                                      <div className={`size-12 rounded-xl flex items-center justify-center ${sourceMode === 'youtube' ? 'bg-red-500 text-white' : 'bg-red-100 text-red-600 group-hover:scale-110 transition-transform'}`}>
+                                         <span className="material-symbols-outlined text-2xl">video_library</span>
+                                      </div>
+                                      <div>
+                                         <h3 className="font-bold text-slate-900 text-lg">YouTube</h3>
+                                         <p className="text-sm text-slate-500 mt-1 leading-relaxed">Resuma qualquer vídeo longo inserindo o seu link.</p>
+                                      </div>
+                                   </button>
+                                   
+                                   {/* Twitter Card */}
+                                   <button 
+                                      onClick={() => setSourceMode('twitter')}
+                                      className={`p-6 rounded-2xl border transition-all text-left flex flex-col gap-4 relative overflow-hidden group hover:-translate-y-1 ${sourceMode === 'twitter' ? 'border-slate-800 bg-slate-100 shadow-md ring-1 ring-slate-800/20' : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm'}`}
+                                   >
+                                      <div className={`size-12 rounded-xl flex items-center justify-center ${sourceMode === 'twitter' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-800 group-hover:scale-110 transition-transform'}`}>
+                                         <span className="material-symbols-outlined text-2xl">tag</span>
+                                      </div>
+                                      <div>
+                                         <h3 className="font-bold text-slate-900 text-lg">X (Twitter)</h3>
+                                         <p className="text-sm text-slate-500 mt-1 leading-relaxed">Resuma Threads longas ou grandes discussões.</p>
+                                      </div>
+                                   </button>
+
+                                   {/* Reddit Card */}
+                                   <button 
+                                      onClick={() => setSourceMode('reddit')}
+                                      className={`p-6 rounded-2xl border transition-all text-left flex flex-col gap-4 relative overflow-hidden group hover:-translate-y-1 ${sourceMode === 'reddit' ? 'border-orange-500 bg-orange-50 shadow-md ring-1 ring-orange-500/20' : 'border-slate-200 bg-white hover:border-orange-200 hover:bg-slate-50 hover:shadow-sm'}`}
+                                   >
+                                      <div className={`size-12 rounded-xl flex items-center justify-center ${sourceMode === 'reddit' ? 'bg-orange-500 text-white' : 'bg-orange-100 text-orange-600 group-hover:scale-110 transition-transform'}`}>
+                                         <span className="material-symbols-outlined text-2xl">forum</span>
+                                      </div>
+                                      <div>
+                                         <h3 className="font-bold text-slate-900 text-lg">Reddit</h3>
+                                         <p className="text-sm text-slate-500 mt-1 leading-relaxed">Transforme debates e Megathreads em resumos úteis.</p>
+                                      </div>
+                                   </button>
+
+                                   {/* IA Geral Card */}
+                                   <button 
+                                      onClick={() => setSourceMode('geral')}
+                                      className={`p-6 rounded-2xl border transition-all text-left flex flex-col gap-4 relative overflow-hidden group hover:-translate-y-1 ${sourceMode === 'geral' ? 'border-primary bg-primary/5 shadow-md ring-1 ring-primary/20' : 'border-slate-200 bg-white hover:border-primary/30 hover:bg-slate-50 hover:shadow-sm'}`}
+                                   >
+                                      <div className={`size-12 rounded-xl flex items-center justify-center ${sourceMode === 'geral' ? 'bg-primary text-white' : 'bg-primary/10 text-primary group-hover:scale-110 transition-transform'}`}>
+                                         <span className="material-symbols-outlined text-2xl">smart_toy</span>
+                                      </div>
+                                      <div>
+                                         <h3 className="font-bold text-slate-900 text-lg">IA Geral</h3>
+                                         <p className="text-sm text-slate-500 mt-1 leading-relaxed">Faça perguntas livres ou peça explicações de tópicos.</p>
+                                      </div>
+                                   </button>
                                 </div>
                             </div>
                         )}
@@ -428,17 +455,37 @@ export function AIWorkspace() {
 
                     {/* Chat Input Wrapper */}
                     <div className="p-4 bg-white border-t border-primary/5">
-                        <div className="max-w-4xl mx-auto relative flex items-center">
+                        <div className="w-full max-w-5xl mx-auto relative flex items-center transition-all duration-300">
                             <button className="absolute left-4 text-slate-400 hover:text-primary transition-colors flex items-center justify-center">
-                                <span className="material-symbols-outlined text-xl">attach_file</span>
+                                <span className={`material-symbols-outlined text-xl transition-colors ${
+                                    sourceMode === 'youtube' ? 'text-red-500 hover:text-red-600' :
+                                    sourceMode === 'twitter' ? 'text-slate-800 hover:text-black' :
+                                    sourceMode === 'reddit' ? 'text-orange-500 hover:text-orange-600' :
+                                    'text-slate-400 hover:text-primary'
+                                }`}>
+                                    {sourceMode === 'youtube' ? 'video_library' :
+                                     sourceMode === 'twitter' ? 'tag' :
+                                     sourceMode === 'reddit' ? 'forum' :
+                                     'attach_file'}
+                                </span>
                             </button>
 
                             <input
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                                className="w-full bg-background-light border-none rounded-full py-4 pl-12 pr-16 focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm shadow-inner transition-all placeholder:text-slate-400"
-                                placeholder="Pergunte qualquer coisa sobre os seus arquivos..."
+                                className={`w-full bg-background-light border-none rounded-full py-4 pl-12 pr-16 focus:outline-none focus:ring-2 text-sm shadow-inner transition-all placeholder:text-slate-400 ${
+                                    sourceMode === 'youtube' ? 'focus:ring-red-500/30' :
+                                    sourceMode === 'twitter' ? 'focus:ring-slate-800/30' :
+                                    sourceMode === 'reddit' ? 'focus:ring-orange-500/30' :
+                                    'focus:ring-primary/30'
+                                }`}
+                                placeholder={
+                                    sourceMode === 'youtube' ? "Cole a URL do vídeo do YouTube aqui..." :
+                                    sourceMode === 'twitter' ? "Cole o link da Thread ou Tweet longo do X aqui..." :
+                                    sourceMode === 'reddit' ? "Cole o link da página contendo o Post do Reddit aqui..." :
+                                    "Pergunte qualquer coisa ou explique um conceito..."
+                                }
                                 type="text"
                                 disabled={isThinking}
                             />
@@ -446,7 +493,12 @@ export function AIWorkspace() {
                             <button
                                 onClick={() => handleSend()}
                                 disabled={!input.trim() || isThinking}
-                                className="absolute right-2 bg-primary disabled:bg-primary/50 text-white size-10 rounded-full flex items-center justify-center shadow-md hover:shadow-lg disabled:hover:shadow-md transition-all"
+                                className={`absolute right-2 text-white size-10 rounded-full flex items-center justify-center shadow-md hover:shadow-lg disabled:opacity-50 transition-all ${
+                                    sourceMode === 'youtube' ? 'bg-red-500' :
+                                    sourceMode === 'twitter' ? 'bg-slate-800' :
+                                    sourceMode === 'reddit' ? 'bg-orange-500' :
+                                    'bg-primary'
+                                }`}
                             >
                                 <span className="material-symbols-outlined text-xl">arrow_upward</span>
                             </button>
