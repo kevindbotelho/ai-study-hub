@@ -74,7 +74,9 @@ export function Library() {
             ];
         }
 
-        const detailedSummaryText = selectedSummary.summary_text || selectedSummary.content || selectedSummary.description || "Resumo detalhado não disponível.";
+        const rawSummaryText = selectedSummary.summary_text || selectedSummary.content || selectedSummary.description || "Resumo detalhado não disponível.";
+        // Force unescape any literal '\\n' that might have been stored during json-stringification
+        const detailedSummaryText = typeof rawSummaryText === 'string' ? rawSummaryText.replace(/\\n/g, '\n') : rawSummaryText;
 
         // Render the detailed view
         return (
