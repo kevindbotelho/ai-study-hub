@@ -96,7 +96,7 @@ export function StudyBlockDetails({
   const hasMedia = videoUrl || coverImageUrl;
 
   return (
-    <div className="flex flex-col w-full max-w-7xl mx-auto pb-10 font-sans text-slate-900 ">
+    <div className="flex flex-col w-full max-w-7xl mx-auto pb-10 font-display text-slate-900 ">
       
       {/* Header Section */}
       <header className="flex items-center justify-between bg-white/80  backdrop-blur-md px-4 py-4 md:px-6 rounded-b-xl mb-6 shadow-sm border-b border-slate-200 ">
@@ -247,17 +247,15 @@ export function StudyBlockDetails({
 
         {/* Bottom Section: Detailed Summary */}
         {detailedSummary && (
-          <Card className="rounded-2xl shadow-sm border-slate-200  border overflow-hidden">
-            <div className="bg-slate-50  border-b border-slate-100  p-4 px-6 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
-              <h3 className="font-bold text-lg text-slate-900 ">Detailed Summary</h3>
-            </div>
-            <CardContent className="p-6 md:p-8">
+          <div className="bg-slate-50 border border-slate-100/80 rounded-2xl p-5 md:p-6 shadow-sm">
+              <h4 className="text-[13px] font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px]">menu_book</span>
+                  Explicação Detalhada
+              </h4>
               <div className="text-sm leading-relaxed text-slate-700 markdown-body">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{detailedSummary}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{detailedSummary}</ReactMarkdown>
               </div>
-            </CardContent>
-          </Card>
+          </div>
         )}
         
       </main>

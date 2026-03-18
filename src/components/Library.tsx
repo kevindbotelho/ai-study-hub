@@ -194,7 +194,7 @@ export function Library() {
                                     )}
                                 </div>
 
-                                <div className="flex justify-between items-center mt-2 pt-4 border-t border-slate-50">
+                                <div className="flex justify-between items-center mt-2 pt-4">
                                     <div className="flex items-center gap-1.5 text-slate-400">
                                         <span className="material-symbols-outlined text-[14px]">schedule</span>
                                         <span className="text-[11px] font-medium">{item.read_time || '5 MIN READ'}</span>
