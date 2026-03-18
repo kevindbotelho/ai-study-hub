@@ -253,7 +253,7 @@ export function StudyBlockDetails({
               <h3 className="font-bold text-lg text-slate-900 ">Detailed Summary</h3>
             </div>
             <CardContent className="p-6 md:p-8">
-              <div className="prose prose-slate  prose-p:leading-relaxed prose-p:text-slate-700 :text-slate-300 max-w-none prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
+              <div className="text-sm leading-relaxed text-slate-700 markdown-body">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{detailedSummary}</ReactMarkdown>
               </div>
             </CardContent>
