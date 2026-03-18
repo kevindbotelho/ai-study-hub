@@ -175,8 +175,8 @@ export function StudyBlockDetails({
           {/* Content Analysis Card */}
           <Card className="rounded-2xl shadow-sm border-slate-200  lg:col-span-1 border">
             <CardHeader className="pb-4">
-              <CardTitle className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-primary" />
+              <CardTitle className="text-base font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-primary" />
                 Content Analysis
               </CardTitle>
             </CardHeader>
@@ -220,8 +220,8 @@ export function StudyBlockDetails({
         {keyHighlights && keyHighlights.length > 0 && (
           <Card className="rounded-2xl shadow-sm border-slate-200  border">
             <CardHeader className="pb-4">
-              <CardTitle className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-primary" />
+              <CardTitle className="text-base font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-primary" />
                 Key Highlights
               </CardTitle>
             </CardHeader>
@@ -248,8 +248,8 @@ export function StudyBlockDetails({
         {/* Bottom Section: Detailed Summary */}
         {detailedSummary && (
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-              <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-primary" />
+              <h4 className="text-base font-bold text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
                   Explicação Detalhada
               </h4>
               <div className="text-sm leading-relaxed text-slate-700 markdown-body">
