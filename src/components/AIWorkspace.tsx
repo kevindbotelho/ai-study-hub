@@ -171,33 +171,47 @@ export function AIWorkspace() {
             setIsThinking(false);
         } else {
             try {
-                // Dispara o Webhook do N8N
-                const response = await fetch('https://n8nkevin.vps-kinghost.net/webhook/ai-study-hub-chat', {
+                // Dispara o Backend Python Serverless local/Vercel
+                const response = await fetch('/api/summarize', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        session_id: currentSessionId,
-                        text: textToSend
+                        url: textToSend,
+                        platform: sourceMode,
+                        instructions: "Gere um resumo detalhado contendo o título e a estrutura definida no prompt base."
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Erro API n8n: ${response.status}`);
+                    throw new Error(`Erro API: ${response.status}`);
                 }
 
-                await response.json();
+                const data = await response.json();
 
-                // A IA agora retorna um JSON estruturado. 
-                // A UI fará o parse disso na hora de exibir (Render), 
-                // e a inserção no banco da tb `summaries` ocorrerá APENAS quando o usuário clicar em "Aprovar".
+                if (data.success && data.summary) {
+                    // Insere a resposta da IA no Supabase para aparecer no chat (visto via Realtime)
+                    await supabase
+                        .from('chat_messages')
+                        .insert([{ session_id: currentSessionId, role: 'ai', text: data.summary }]);
+                } else {
+                    console.error("Erro interno da API Python:", data.error);
+                    await supabase
+                        .from('chat_messages')
+                        .insert([{ session_id: currentSessionId, role: 'ai', text: `Ocorreu um erro na conexão ou extração: **${data.error || 'Erro Desconhecido'}**\n\nVerifique se o link está acessível ou se há proteção de login.` }]);
+                }
 
-                // O n8n vai retornar a resposta via nó "Respond to Webhook", 
-                // mas a UI principal já é atualizada via Supabase Realtime!
-                // Aqui apenas garantimos que terminou de carregar caso a web socket demore.
+                // O Supabase Realtime (.on('postgres_changes')) receberá o insert acima 
+                // e listará a mensagem. O setIsThinking é resolvido lá na prop, 
+                // mas caso seja muito rápido ou o socket falhe, deixamos esse limite aqui:
                 setIsThinking(false);
 
             } catch (err) {
-                console.error("Error triggering N8N automation:", err);
+                console.error("Error triggering automation:", err);
+                
+                await supabase
+                    .from('chat_messages')
+                    .insert([{ session_id: currentSessionId, role: 'ai', text: `Ocorreu um erro no servidor backend: **${err instanceof Error ? err.message : String(err)}**\n\nSe estiver local, certifique-se de usar \`vercel dev\` para que a pasta /api seja hosteada nativamente.` }]);
+
                 setIsThinking(false); // Remove loading state early if API call fails entirely
             }
         }
@@ -266,8 +280,8 @@ export function AIWorkspace() {
                     <div className="flex-1 overflow-y-auto p-6 space-y-8 flex flex-col">
 
                         {messages.length === 0 && (
-                            <div className="flex flex-col items-center justify-center text-center pt-[5vh] pb-8 space-y-8 w-full max-w-5xl mx-auto">
-                                <div className="max-w-xl">
+                            <div className="flex flex-col items-center justify-center text-center pt-[5vh] pb-8 space-y-8 w-full max-w-[95%] xl:max-w-[1400px] mx-auto">
+                                <div className="max-w-2xl">
                                     <h2 className="text-3xl font-bold mb-3 text-slate-800 tracking-tight">O que vamos explorar hoje?</h2>
                                     <p className="text-slate-500 text-base">Escolha a fonte do conteúdo para gerar um resumo otimizado ou faça uma pergunta livre.</p>
                                 </div>
