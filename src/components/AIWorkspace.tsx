@@ -6,15 +6,15 @@ import remarkGfm from 'remark-gfm';
 type SourceMode = 'geral' | 'youtube' | 'twitter' | 'reddit';
 
 const MODELS = [
-    { id: 'gemini-3.1-flash-lite-preview', label: 'Rápido', icon: 'bolt' },
-    { id: 'gemini-3.1-pro-preview',        label: 'Raciocínio', icon: 'psychology' },
+    { id: 'gemini-2.5-flash',        label: 'Rápido',     icon: 'bolt' },
+    { id: 'gemini-3.1-pro-preview',  label: 'Raciocínio', icon: 'psychology' },
 ] as const;
 
 type ModelId = typeof MODELS[number]['id'];
 
 export function AIWorkspace() {
     const [sourceMode, setSourceMode] = useState<SourceMode>('geral');
-    const [selectedModel, setSelectedModel] = useState<ModelId>('gemini-3.1-flash-lite-preview');
+    const [selectedModel, setSelectedModel] = useState<ModelId>('gemini-2.5-flash');
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState('');
@@ -167,15 +167,17 @@ export function AIWorkspace() {
             setSessionId(currentSessionId);
         }
 
-        // Optimistically add to UI
-        const tempUserMsg = { id: Date.now().toString(), role: 'user', text: textToSend };
+        // Optimistically add to UI — usamos UUID para que o listener Realtime consiga
+        // deduplicar comparando o id local com o id devolvido pelo Supabase.
+        const userMsgId = crypto.randomUUID();
+        const tempUserMsg = { id: userMsgId, role: 'user', text: textToSend };
         setMessages(prev => [...prev, tempUserMsg]);
         setIsThinking(true);
 
         // Insert into DB. The N8N webhook should listen to this insert to trigger the generative AI task.
         const { error: insertError } = await supabase
             .from('chat_messages')
-            .insert([{ session_id: currentSessionId, role: 'user', text: textToSend }]);
+            .insert([{ id: userMsgId, session_id: currentSessionId, role: 'user', text: textToSend }]);
 
         if (insertError) {
             console.error("Failed to insert message", insertError);
@@ -194,36 +196,46 @@ export function AIWorkspace() {
                     })
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Erro API: ${response.status}`);
+                // Tenta ler o JSON mesmo em erro pra extrair a mensagem real do backend
+                let data: any = null;
+                try {
+                    data = await response.json();
+                } catch {
+                    data = null;
                 }
 
-                const data = await response.json();
+                if (!response.ok) {
+                    const backendMsg = data?.error || `HTTP ${response.status}`;
+                    throw new Error(backendMsg);
+                }
 
-                const aiText = data.success && data.summary
+                const aiText = data?.success && data?.summary
                     ? data.summary
-                    : `Ocorreu um erro na conexão ou extração: **${data.error || 'Erro Desconhecido'}**\n\nVerifique se o link está acessível ou se há proteção de login.`;
+                    : `Ocorreu um erro na conexão ou extração: **${data?.error || 'Erro Desconhecido'}**\n\nVerifique se o link está acessível ou se há proteção de login.`;
 
-                // Garante que a mensagem aparece na tela mesmo se o Realtime falhar
-                const aiMsg = { id: Date.now().toString(), role: 'ai', text: aiText };
+                // Garante que a mensagem aparece na tela mesmo se o Realtime falhar.
+                // Usamos o MESMO id no estado local e no insert para o Realtime deduplicar.
+                const aiMsgId = crypto.randomUUID();
+                const aiMsg = { id: aiMsgId, role: 'ai', text: aiText };
                 setMessages(prev => [...prev, aiMsg]);
                 setIsThinking(false);
 
                 // Salva no Supabase (Realtime vai deduplicar pelo id)
                 await supabase
                     .from('chat_messages')
-                    .insert([{ session_id: currentSessionId, role: 'ai', text: aiText }]);
+                    .insert([{ id: aiMsgId, session_id: currentSessionId, role: 'ai', text: aiText }]);
 
             } catch (err) {
                 console.error("Error triggering automation:", err);
 
+                const errMsgId = crypto.randomUUID();
                 const errText = `Ocorreu um erro no servidor backend: **${err instanceof Error ? err.message : String(err)}**`;
-                setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', text: errText }]);
+                setMessages(prev => [...prev, { id: errMsgId, role: 'ai', text: errText }]);
                 setIsThinking(false);
 
                 await supabase
                     .from('chat_messages')
-                    .insert([{ session_id: currentSessionId, role: 'ai', text: errText }]);
+                    .insert([{ id: errMsgId, session_id: currentSessionId, role: 'ai', text: errText }]);
             }
         }
     };

@@ -4,8 +4,8 @@ import os
 import re
 import urllib.request
 import urllib.error
+import urllib.parse
 from http.server import BaseHTTPRequestHandler
-from urllib.parse import urlparse
 
 # As dependências podem falhar em ambiente local se não instaladas.
 # A Vercel cuida disso automaticamente ao ler o requirements.txt
@@ -98,10 +98,13 @@ def extract_general(url):
     return f"Contexto (Artigo/Pagina Web):\n{text}"
 
 ALLOWED_MODELS = {
-    'gemini-3.1-flash-lite-preview',
+    'gemini-3.1-flash-preview',
     'gemini-3.1-pro-preview',
+    # Fallbacks estáveis caso os preview fiquem indisponíveis
+    'gemini-2.5-flash',
+    'gemini-2.5-pro',
 }
-DEFAULT_MODEL = 'gemini-3.1-flash-lite-preview'
+DEFAULT_MODEL = 'gemini-2.5-flash'
 
 def summarize_with_gemini(text, instructions="", model=DEFAULT_MODEL):
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("VITE_GEMINI_API_KEY")
@@ -112,6 +115,12 @@ def summarize_with_gemini(text, instructions="", model=DEFAULT_MODEL):
         model = DEFAULT_MODEL
 
     client = genai.Client(api_key=api_key)
+
+    # Fallback map: se o preview falhar (model not found / rate limit), cai pro estável
+    FALLBACK_MAP = {
+        'gemini-3.1-flash-preview': 'gemini-2.5-flash',
+        'gemini-3.1-pro-preview': 'gemini-2.5-pro',
+    }
 
     prompt = f"""Você é um assistente acadêmico e técnico (AI Study Hub).
 Você processa conteúdos capturados e os resume extraindo as informações mais valiosas.
@@ -132,12 +141,22 @@ Abaixo o conteúdo bruto capturado:
 {text}
 """
 
-    response = client.models.generate_content(
-        model=model,
-        contents=prompt,
-    )
-
-    return response.text
+    try:
+        response = client.models.generate_content(
+            model=model,
+            contents=prompt,
+        )
+        return response.text
+    except Exception as primary_err:
+        fallback = FALLBACK_MAP.get(model)
+        if not fallback:
+            raise
+        # Tenta o modelo estável equivalente
+        response = client.models.generate_content(
+            model=fallback,
+            contents=prompt,
+        )
+        return response.text
 
 class handler(BaseHTTPRequestHandler):
     
