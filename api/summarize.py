@@ -37,11 +37,24 @@ def extract_youtube(url):
     if not video_id:
         raise ValueError("URL do YouTube inválida.")
     
-    # Tenta transcrever. Primeiro pt, depois auto-generated pt, depois en.
+    # Tenta transcrever.
     try:
-         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['pt', 'en'])
+         # Pega a lista de transcrições disponíveis
+         transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+         
+         # Tenta encontrar em PT ou EN, se não encontrar, pega a primeira disponível
+         try:
+             transcript = transcript_list.find_transcript(['pt', 'en']).fetch()
+         except:
+             # Pega a primeira que tiver e traduz pra pt se possível, ou usa assim mesmo (o Gemini resolve)
+             first_transcript = next(iter(transcript_list))
+             transcript = first_transcript.fetch()
+             
     except Exception as e:
-         raise ValueError(f"Não foi possível obter as legendas do vídeo: {str(e)}")
+         error_str = str(e)
+         if "Subtitles are disabled" in error_str or "No transcripts" in error_str or "Could not retrieve a transcript" in error_str:
+             raise ValueError("Este vídeo não possui legendas disponíveis (foram desativadas pelo canal ou não geradas). Como a IA precisa do texto para ler o vídeo, não é possível resumir este conteúdo.")
+         raise ValueError(f"Não foi possível obter as legendas do vídeo: {error_str}")
          
     text = " ".join([item['text'] for item in transcript])
     return f"Contexto (Vídeo do YouTube): {text}"
