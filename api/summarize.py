@@ -37,27 +37,42 @@ def extract_youtube(url):
     if not video_id:
         raise ValueError("URL do YouTube inválida.")
     
-    # Tenta transcrever.
     try:
-         # Pega a lista de transcrições disponíveis
+         # Pega a lista com absolutamente todas as transcrições (manuais e automáticas)
          transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
          
-         # Tenta encontrar em PT ou EN, se não encontrar, pega a primeira disponível
+         # 1. Tenta achar Português ou Inglês (seja manual ou automática)
          try:
-             transcript = transcript_list.find_transcript(['pt', 'en']).fetch()
-         except:
-             # Pega a primeira que tiver e traduz pra pt se possível, ou usa assim mesmo (o Gemini resolve)
-             first_transcript = next(iter(transcript_list))
-             transcript = first_transcript.fetch()
+             # O find_transcript busca tanto manuais quanto automáticas por padrão
+             transcript_obj = transcript_list.find_transcript(['pt', 'en'])
              
+             # Se a legenda encontrada não for português, mas o YouTube permitir traduzir pra PT, pedimos a tradução
+             if transcript_obj.language_code != 'pt':
+                 try:
+                     transcript_obj = transcript_obj.translate('pt')
+                 except:
+                     pass # Se não der pra traduzir, usamos a original (Inglês)
+             
+             transcript = transcript_obj.fetch()
+         except:
+             # 2. Fallback total: Pega a PRIMEIRA legenda que existir (qualquer idioma) e tenta traduzir pra PT
+             try:
+                 first_transcript = next(iter(transcript_list))
+                 try:
+                     transcript = first_transcript.translate('pt').fetch()
+                 except:
+                     transcript = first_transcript.fetch()
+             except StopIteration:
+                 raise ValueError("Este vídeo não possui nenhuma legenda disponível no YouTube (nem automática).")
+
+         text = " ".join([item['text'] for item in transcript])
+         return f"Contexto (Vídeo do YouTube): {text}"
+
     except Exception as e:
          error_str = str(e)
-         if "Subtitles are disabled" in error_str or "No transcripts" in error_str or "Could not retrieve a transcript" in error_str:
-             raise ValueError("Este vídeo não possui legendas disponíveis (foram desativadas pelo canal ou não geradas). Como a IA precisa do texto para ler o vídeo, não é possível resumir este conteúdo.")
-         raise ValueError(f"Não foi possível obter as legendas do vídeo: {error_str}")
-         
-    text = " ".join([item['text'] for item in transcript])
-    return f"Contexto (Vídeo do YouTube): {text}"
+         if "Subtitles are disabled" in error_str or "No transcripts" in error_str:
+             raise ValueError("O YouTube informou que as legendas estão desativadas para este vídeo. Verifique se o botão 'Mostrar Transcrição' realmente funciona para este vídeo específico no seu navegador.")
+         raise ValueError(f"Erro ao obter transcrição do YouTube: {error_str}")
 
 def extract_reddit(url):
     # Reddit permite append de .json para puxar dados
@@ -164,6 +179,7 @@ Abaixo o conteúdo bruto capturado:
         fallback = FALLBACK_MAP.get(model)
         if not fallback:
             raise
+        
         # Tenta o modelo estável equivalente
         response = client.models.generate_content(
             model=fallback,
