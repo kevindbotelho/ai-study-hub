@@ -127,7 +127,10 @@ export function AIWorkspace() {
             .channel(`chat_messages:session_id=eq.${sessionId}`)
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, payload => {
                 setMessages(prev => [...prev.filter(m => m.id !== payload.new.id), payload.new]);
-                setIsThinking(false); // Remove thinking state when new db message arrives
+                // Só para o loading quando a mensagem da IA chegar, não a do usuário
+                if (payload.new.role === 'ai') {
+                    setIsThinking(false);
+                }
             })
             .subscribe();
 
@@ -197,31 +200,30 @@ export function AIWorkspace() {
 
                 const data = await response.json();
 
-                if (data.success && data.summary) {
-                    // Insere a resposta da IA no Supabase para aparecer no chat (visto via Realtime)
-                    await supabase
-                        .from('chat_messages')
-                        .insert([{ session_id: currentSessionId, role: 'ai', text: data.summary }]);
-                } else {
-                    console.error("Erro interno da API Python:", data.error);
-                    await supabase
-                        .from('chat_messages')
-                        .insert([{ session_id: currentSessionId, role: 'ai', text: `Ocorreu um erro na conexão ou extração: **${data.error || 'Erro Desconhecido'}**\n\nVerifique se o link está acessível ou se há proteção de login.` }]);
-                }
+                const aiText = data.success && data.summary
+                    ? data.summary
+                    : `Ocorreu um erro na conexão ou extração: **${data.error || 'Erro Desconhecido'}**\n\nVerifique se o link está acessível ou se há proteção de login.`;
 
-                // O Supabase Realtime (.on('postgres_changes')) receberá o insert acima 
-                // e listará a mensagem. O setIsThinking é resolvido lá na prop, 
-                // mas caso seja muito rápido ou o socket falhe, deixamos esse limite aqui:
+                // Garante que a mensagem aparece na tela mesmo se o Realtime falhar
+                const aiMsg = { id: Date.now().toString(), role: 'ai', text: aiText };
+                setMessages(prev => [...prev, aiMsg]);
                 setIsThinking(false);
+
+                // Salva no Supabase (Realtime vai deduplicar pelo id)
+                await supabase
+                    .from('chat_messages')
+                    .insert([{ session_id: currentSessionId, role: 'ai', text: aiText }]);
 
             } catch (err) {
                 console.error("Error triggering automation:", err);
-                
+
+                const errText = `Ocorreu um erro no servidor backend: **${err instanceof Error ? err.message : String(err)}**`;
+                setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', text: errText }]);
+                setIsThinking(false);
+
                 await supabase
                     .from('chat_messages')
-                    .insert([{ session_id: currentSessionId, role: 'ai', text: `Ocorreu um erro no servidor backend: **${err instanceof Error ? err.message : String(err)}**\n\nSe estiver local, certifique-se de usar \`vercel dev\` para que a pasta /api seja hosteada nativamente.` }]);
-
-                setIsThinking(false); // Remove loading state early if API call fails entirely
+                    .insert([{ session_id: currentSessionId, role: 'ai', text: errText }]);
             }
         }
     };
