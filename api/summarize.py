@@ -97,13 +97,22 @@ def extract_general(url):
         
     return f"Contexto (Artigo/Pagina Web):\n{text}"
 
-def summarize_with_gemini(text, instructions=""):
+ALLOWED_MODELS = {
+    'gemini-3.1-flash-lite-preview',
+    'gemini-3.1-pro-preview',
+}
+DEFAULT_MODEL = 'gemini-3.1-flash-lite-preview'
+
+def summarize_with_gemini(text, instructions="", model=DEFAULT_MODEL):
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("VITE_GEMINI_API_KEY")
     if not api_key:
         raise ValueError("A chave da API do Gemini (GEMINI_API_KEY) não foi configurada no ambiente da Vercel.")
-        
+
+    if model not in ALLOWED_MODELS:
+        model = DEFAULT_MODEL
+
     client = genai.Client(api_key=api_key)
-    
+
     prompt = f"""Você é um assistente acadêmico e técnico (AI Study Hub).
 Você processa conteúdos capturados e os resume extraindo as informações mais valiosas.
 Seja direto, focado no aprendizado e liste insights-chave (bullet points são muito bem vindos).
@@ -124,11 +133,10 @@ Abaixo o conteúdo bruto capturado:
 """
 
     response = client.models.generate_content(
-        model='gemini-2.5-flash',
+        model=model,
         contents=prompt,
-        # Opcional: configurar tokens e temperatura
     )
-    
+
     return response.text
 
 class handler(BaseHTTPRequestHandler):
@@ -149,6 +157,7 @@ class handler(BaseHTTPRequestHandler):
             url = body.get('url', '')
             platform = body.get('platform', 'geral') # youtube | reddit | twitter | geral
             instructions = body.get('instructions', '')
+            model = body.get('model', DEFAULT_MODEL)
             
             if not url:
                 self._send_response({'error': 'A URL não foi fornecida.'}, 400)
@@ -173,7 +182,7 @@ class handler(BaseHTTPRequestHandler):
                 raw_text = raw_text[:2000000]
                 
             # Sumarização via Gemini
-            summary = summarize_with_gemini(raw_text, instructions=instructions)
+            summary = summarize_with_gemini(raw_text, instructions=instructions, model=model)
             
             self._send_response({
                 'success': True,

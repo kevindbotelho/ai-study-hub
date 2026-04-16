@@ -5,8 +5,16 @@ import remarkGfm from 'remark-gfm';
 
 type SourceMode = 'geral' | 'youtube' | 'twitter' | 'reddit';
 
+const MODELS = [
+    { id: 'gemini-3.1-flash-lite-preview', label: 'Rápido', icon: 'bolt' },
+    { id: 'gemini-3.1-pro-preview',        label: 'Raciocínio', icon: 'psychology' },
+] as const;
+
+type ModelId = typeof MODELS[number]['id'];
+
 export function AIWorkspace() {
     const [sourceMode, setSourceMode] = useState<SourceMode>('geral');
+    const [selectedModel, setSelectedModel] = useState<ModelId>('gemini-3.1-flash-lite-preview');
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState('');
@@ -178,6 +186,7 @@ export function AIWorkspace() {
                     body: JSON.stringify({
                         url: textToSend,
                         platform: sourceMode,
+                        model: selectedModel,
                         instructions: "Gere um resumo detalhado contendo o título e a estrutura definida no prompt base."
                     })
                 });
@@ -226,7 +235,26 @@ export function AIWorkspace() {
                     <span className="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
                     <h1 className="text-xl font-bold tracking-tight">Estúdio IA</h1>
                 </div>
-                {/* O botão "Novo Chat" foi removido por redundância. O usuário já cria novo chat ao navegar. */}
+                <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 font-medium hidden sm:block">Modelo:</span>
+                    <div className="flex items-center bg-slate-100 rounded-full p-1 gap-0.5">
+                        {MODELS.map(m => (
+                            <button
+                                key={m.id}
+                                onClick={() => setSelectedModel(m.id)}
+                                title={m.id}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                                    selectedModel === m.id
+                                        ? 'bg-white text-primary shadow-sm'
+                                        : 'text-slate-500 hover:text-slate-700'
+                                }`}
+                            >
+                                <span className="material-symbols-outlined text-[14px]">{m.icon}</span>
+                                {m.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </header>
 
             <main className="flex flex-1 overflow-hidden">
